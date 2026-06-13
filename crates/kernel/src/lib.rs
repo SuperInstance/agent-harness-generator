@@ -17,6 +17,7 @@
 //! Cross-platform kernel for the agent-harness-generator project.
 
 pub mod claims;
+pub mod federation;
 pub mod hooks;
 pub mod intel;
 pub mod mcp;

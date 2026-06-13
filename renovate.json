@@ -1,0 +1,61 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":automergePatch",
+    ":automergeMinor",
+    ":enableVulnerabilityAlertsWithLabel(security)",
+    "group:monorepos"
+  ],
+  "timezone": "UTC",
+  "schedule": ["before 6am on Monday"],
+  "labels": ["dependencies"],
+  "rangeStrategy": "bump",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on Monday"]
+  },
+  "packageRules": [
+    {
+      "description": "Group all @ruflo/* internal packages together",
+      "groupName": "ruflo internal",
+      "matchPackagePatterns": ["^@ruflo/"]
+    },
+    {
+      "description": "Group all @ruvector/* internal packages together",
+      "groupName": "ruvector internal",
+      "matchPackagePatterns": ["^@ruvector/"]
+    },
+    {
+      "description": "Pin TypeScript across the monorepo for predictability",
+      "matchPackageNames": ["typescript"],
+      "rangeStrategy": "pin"
+    },
+    {
+      "description": "Wasm-bindgen + napi-rs updates need extra care — manual review",
+      "matchPackageNames": ["wasm-bindgen", "wasm-bindgen-cli"],
+      "matchPaths": ["crates/**"],
+      "automerge": false,
+      "labels": ["dependencies", "wasm-toolchain"]
+    },
+    {
+      "description": "ed25519-dalek major bumps need explicit sign-off",
+      "matchPackageNames": ["ed25519-dalek"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["dependencies", "security-critical"]
+    },
+    {
+      "description": "Bundle dev deps together to reduce PR noise",
+      "groupName": "dev dependencies",
+      "matchDepTypes": ["devDependencies"]
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security", "vulnerability"]
+  },
+  "prHourlyLimit": 4,
+  "prConcurrentLimit": 8
+}

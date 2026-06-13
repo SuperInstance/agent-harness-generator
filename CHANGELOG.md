@@ -4,6 +4,43 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 9 (2026-06-13)
+
+- **Federation transport in Rust kernel** (`crates/kernel/src/federation.rs`):
+  - `Peer`, `TrustTier` (Untrusted / Trusted / SelfPeer), `Message`
+    envelope, `PeerRegistry`
+  - `admit_message()` security primitive: SelfPeer always admits; Trusted
+    admits read-only ops without claim; everything else needs a claim
+  - `is_read_only_capability()` recognises `*.read`, `*.list`, `*.search`
+    plus a small allowlist
+  - 11 new Rust tests pinning the admit-decision matrix
+- **`harness federate` subcommand** (`packages/create-agent-harness/src/
+  federate.ts`):
+  - 5 subactions: `init`, `add`, `remove`, `list [--trusted]`, `status`,
+    `help`
+  - State persisted at `.harness/federation.json`
+  - Immutable state operations (test-friendly)
+  - 11 new TS tests
+- **Real intelligence pipeline orchestration** (`crates/kernel/src/intel.rs`):
+  - `PipelineState` with steps + completed + aborted
+  - `next_phase()` advances Retrieve -> Judge -> Distill -> Consolidate;
+    Skip outcomes still advance, Fail outcomes abort the pipeline
+  - `should_fire_distill()` fallback predicate (judge_score >= 0.7) for
+    when the TS PageHinkleyDetector isn't loaded
+  - 7 new Rust tests
+- **Renovate config** (`renovate.json`):
+  - Weekly schedule, automerge patch/minor, group @ruflo/* and
+    @ruvector/* internal
+  - wasm-bindgen / wasm-bindgen-cli marked no-automerge (toolchain
+    upgrades need review)
+  - ed25519-dalek MAJOR bumps require explicit sign-off (security-critical
+    label)
+  - lockFileMaintenance enabled
+- **Examples directory** (`examples/`):
+  - `multi-host/` walkthrough showing one harness targeting Claude Code +
+    Codex
+  - `federation/` walkthrough showing 2-peer trust-tier coordination
+
 ### Added — Iter 8 (2026-06-13)
 
 - **`harness` CLI binary** (`packages/create-agent-harness/src/harness-bin.ts`)

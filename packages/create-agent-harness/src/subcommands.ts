@@ -13,6 +13,7 @@ import { existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, resolve } from 'node:path';
 import { findWitness, readAndVerify } from './witness-client.js';
+import { federateDispatch } from './federate.js';
 
 export type SubcommandResult = { code: number; lines: string[] };
 
@@ -223,18 +224,21 @@ export async function dispatch(subcommand: string, args: string[]): Promise<Subc
       return doctor(args);
     case 'sign':
       return sign(args);
+    case 'federate':
+      return federateDispatch(args.slice(0));
     case 'help':
     case undefined:
       return {
         code: 0,
         lines: [
-          'Usage: harness <subcommand> [path]',
+          'Usage: harness <subcommand> [args]',
           '',
           'Subcommands:',
-          '  sign     — produce or update the witness manifest for a harness',
-          '  verify   — verify the witness manifest of a harness',
-          '  doctor   — smoke-check a scaffolded harness',
-          '  help     — show this message',
+          '  sign      — produce or update the witness manifest for a harness',
+          '  verify    — verify the witness manifest of a harness',
+          '  doctor    — smoke-check a scaffolded harness',
+          '  federate  — manage federation peers (init/add/remove/list/status)',
+          '  help      — show this message',
           '',
           'Most subcommands operate on the current directory by default.',
         ],
