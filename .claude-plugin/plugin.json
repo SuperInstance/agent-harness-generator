@@ -40,7 +40,8 @@
     "publish-harness",
     "validate-harness",
     "harness-secrets",
-    "verify-witness"
+    "verify-witness",
+    "upgrade-harness"
   ],
   "commands": [
     {
@@ -62,6 +63,10 @@
     {
       "name": "verify-witness",
       "description": "Verify the Ed25519 witness manifest of a scaffolded harness"
+    },
+    {
+      "name": "upgrade-harness",
+      "description": "Drift detection + apply against the latest generator template (--apply opt-in)"
     }
   ],
   "permissions": ["memory", "filesystem", "network"],

@@ -4,6 +4,28 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 49 (2026-06-13)
+
+- **6th Codex skill: `upgrade-harness`** — wraps the iter-47 `harness
+  upgrade` CLI command. Mirrors the pattern of iter-22 (validate-harness,
+  harness-secrets) and iter-28 (verify-witness):
+  - args: `path` (default `.`), `apply` (default false; choices
+    true/false), `conflict` (default inline; choices inline/rej)
+  - dispatch: `mcp_tool` against the `upgrade_harness` MCP tool
+  - tags: `upgrade`, `drift`, `template`, `scaffold`, `lifecycle`
+  - README documents the 3-bucket plan model (added/removed/changed)
+    + the lifecycle position + per-exit-code semantics
+- **`.claude-plugin/plugin.json` updated** to list the 6th skill +
+  6th command — otherwise the iter-24 orphan-skill check would flag
+  the new directory.
+- **Marketplace entry regenerated**: now reports `6 skills, 6
+  commands` from the live plugin.json.
+- Codex skill catalog: **create / publish / validate / secrets /
+  verify-witness / upgrade-harness** — 6 surfaces (was 5).
+- All 20 schema tests still pass (`codex-skills.test.ts` +
+  `claude-marketplace-plugin.test.ts` + `marketplace-entry.test.ts`):
+  no orphan skill, no orphan plugin entry, no shape drift.
+
 ### Added — Iter 48 (2026-06-13)
 
 - **CLI conventional flags on the `harness` binary**:
