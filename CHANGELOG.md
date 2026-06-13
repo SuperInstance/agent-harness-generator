@@ -4,6 +4,51 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 24 (2026-06-13)
+
+- **`__tests__/claude-marketplace-plugin.test.ts`** (8 cases) — pins
+  the shape of `.claude-plugin/plugin.json` so future host/skill drift
+  fails CI before installs break silently:
+  - field-by-field required-field check against marketplace schema
+  - every `commands[i]` has kebab-case `name` + ≥10-char `description`
+  - every `skills[]` entry has a backing `.codex/skills/<name>/` dir
+  - every `.codex/skills/` directory is referenced from `plugin.json`
+    (no orphans either way)
+  - tags include every supported host (catches host-add drift —
+    iter-12 added `rvm` and it took until now to land in plugin.json)
+  - `skills.length` matches `.codex/skills` dir count exactly
+- **`.claude-plugin/plugin.json` rewritten** to reflect current state:
+  - 6-host description (was 4)
+  - tags: added `openclaw`, `rvm`, `ed25519`, `witness`,
+    `gcp-secret-manager` (5 new keywords for marketplace discoverability)
+  - skills: dropped non-existent `list-templates`, added `validate-harness`
+    + `harness-secrets` from iter 22
+  - commands: now 4 entries (was 2), all backed by real codex skills
+
+### Fixed — Iter 24 (2026-06-13)
+
+- **Node CI jobs red on iter-23** (build failed across all 4 node jobs):
+  - `npm run -ws --if-present build` runs the workspace builds in
+    undefined order, and `tsc` in `host-rvm` runs BEFORE `kernel-js`
+    produces `dist/index.d.ts` — failure: "Cannot find module
+    `@ruflo/kernel`".
+  - Replaced root `build` script with `scripts/build-ordered.mjs`,
+    a 4-phase topological build:
+      1. `kernel-js` (everyone depends on it)
+      2. `vertical-base` (vertical-trading depends on it)
+      3. all hosts + sdk + cli + bench (parallel-safe)
+      4. `vertical-trading`
+- **`kernel-js/src/index.ts:48`** — `import('../pkg/ruflo_kernel_wasm.js')`
+  is wasm-pack output that doesn't exist on a TS-only checkout. Added
+  `@ts-ignore`; the runtime gracefully falls back to NAPI when the
+  dynamic import fails.
+- **`kernel-js/src/memory-rvf.ts:50`** — `@ruvector/rvf` is an OPTIONAL
+  peer dep. Added `@ts-ignore` so a fresh install without it builds
+  cleanly (already had runtime fallback).
+- **`scripts/publish-dryrun.mjs`** — `execFile` of `npm.cmd` on Windows
+  with `shell: true` triggers Node 22's DEP0190 deprecation. Switched
+  to `cmd.exe /d /s /c npm …` invocation; same behaviour, no warning.
+
 ### Added — Iter 23 (2026-06-13)
 
 - **End-to-end integration test**

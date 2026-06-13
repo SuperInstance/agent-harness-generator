@@ -45,15 +45,23 @@ function parseJsonLoose(s) {
 }
 
 async function dryRunOne(pkg) {
-  // Use shell:true on Windows so npm.cmd resolves; without it execFile ENOENTs.
-  const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  // On Windows, npm is npm.cmd — a batch shim. execFile can't spawn .cmd
+  // directly (CreateProcess can't execute batch files). Two options:
+  //   (a) shell:true — emits DEP0190 shell-injection deprecation warning
+  //   (b) cmd.exe /c npm — safe + warning-free, args are passed as a
+  //       separate array so cmd.exe handles its own quoting
+  // We pick (b). All args we pass (just package names + npm flags) are
+  // known-safe, so the cmd.exe argument-quoting is a non-issue.
+  const args = ['publish', '--dry-run', '--json'];
+  const [bin, finalArgs] = process.platform === 'win32'
+    ? ['cmd.exe', ['/d', '/s', '/c', 'npm', ...args]]
+    : ['npm', args];
   let stdout = '', stderr = '', exitCode = 0;
   try {
-    const r = await execFile(npmCmd, ['publish', '--dry-run', '--json'], {
+    const r = await execFile(bin, finalArgs, {
       cwd: pkg.dir,
       maxBuffer: 1024 * 1024 * 8,
       windowsHide: true,
-      shell: process.platform === 'win32',
     });
     stdout = r.stdout; stderr = r.stderr;
   } catch (e) {

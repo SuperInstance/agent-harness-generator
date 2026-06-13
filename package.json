@@ -15,7 +15,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run -ws --if-present build",
+    "build": "node scripts/build-ordered.mjs",
     "test": "npm run -ws --if-present test",
     "lint": "npm run -ws --if-present lint",
     "build:wasm": "wasm-pack build crates/kernel-wasm --target bundler --out-dir ../../packages/kernel-js/pkg --release",

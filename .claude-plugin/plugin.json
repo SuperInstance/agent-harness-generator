@@ -1,7 +1,7 @@
 {
   "name": "agent-harness-generator",
   "displayName": "Agent Harness Generator",
-  "description": "Scaffold your own focused AI agent harness — Claude Code / Codex / pi.dev / Hermes. WASM kernel, multi-host, witness-signed.",
+  "description": "Scaffold your own focused AI agent harness — Claude Code, Codex, pi.dev, Hermes, OpenClaw, or RVM. WASM kernel (Rust → wasm-bindgen + NAPI-RS), 6 hosts, witness-signed releases, GCP Secret Manager validation.",
   "version": "0.1.0",
   "author": {
     "id": "ruvnet",
@@ -24,16 +24,22 @@
     "codex",
     "pi-dev",
     "hermes-agent",
+    "openclaw",
+    "rvm",
     "rust",
     "wasm",
-    "napi-rs"
+    "napi-rs",
+    "ed25519",
+    "witness",
+    "gcp-secret-manager"
   ],
   "minClaudeFlowVersion": "3.0.0",
   "type": "scaffolding",
   "skills": [
     "create-harness",
-    "list-templates",
-    "publish-harness"
+    "publish-harness",
+    "validate-harness",
+    "harness-secrets"
   ],
   "commands": [
     {
@@ -41,8 +47,16 @@
       "description": "Scaffold a new AI agent harness in the current directory"
     },
     {
-      "name": "list-harness-templates",
-      "description": "List available harness templates (minimal, vertical, multi-host)"
+      "name": "publish-harness",
+      "description": "Smoke-test + witness-sign + npm publish for a generated harness"
+    },
+    {
+      "name": "validate-harness",
+      "description": "Release-readiness umbrella: doctor + verify + path-guard + mcp + secrets"
+    },
+    {
+      "name": "harness-secrets",
+      "description": "GCP Secret Manager helpers — check / fetch / validate-token"
     }
   ],
   "permissions": ["memory", "filesystem", "network"],

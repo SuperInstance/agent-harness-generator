@@ -47,6 +47,9 @@ let _rvf: RvfModule | null | undefined;
 async function loadRvf(): Promise<RvfModule | null> {
   if (_rvf !== undefined) return _rvf;
   try {
+    // @ts-ignore — @ruvector/rvf is declared as an OPTIONAL peer
+    // dependency, so a fresh CI install without it must build cleanly.
+    // The graceful-fallback path returns null when the package is absent.
     _rvf = await import('@ruvector/rvf') as unknown as RvfModule;
     return _rvf;
   } catch {
