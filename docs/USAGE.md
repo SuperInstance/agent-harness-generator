@@ -1,6 +1,8 @@
-# Using agent-harness-generator
+# Using agent-harness-generator (the meta-harness)
 
 A plain-language walkthrough from "I want my own AI agent harness" to "I just published one to npm."
+
+> **agent-harness-generator is a meta-harness** — a harness whose product is other harnesses. You operate it once; the harness you produce is what your users install. They never see the meta-harness layer.
 
 ## What you'll have at the end
 

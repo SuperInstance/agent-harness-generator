@@ -2,7 +2,9 @@
 
 # agent-harness-generator
 
-**Scaffold your own focused AI agent harness — like [ruflo](https://github.com/ruvnet/ruflo), uniquely yours.**
+**The meta-harness for AI agents — a harness that builds other harnesses.**
+
+Like ruflo is the meta-harness for Claude, this is the meta-harness for AI agents themselves: a system whose job is to produce focused, vertical, branded agent harnesses that run on any host. Pick primitives, pick content, supply identity → ship a npm-publishable harness with your own `npx <name>` CLI, MCP server, memory, learning loop, and witness-signed releases.
 
 [![npm — coming soon](https://img.shields.io/badge/npm%20create--agent--harness-coming%20soon-cb3837?style=for-the-badge&logo=npm)](https://github.com/ruvnet/agent-harness-generator)
 [![Status — scaffold landed](https://img.shields.io/badge/status-scaffold%20landed%20%2F%20iter%201-f59e0b?style=for-the-badge)](docs/adrs/INDEX.md)
@@ -22,7 +24,9 @@
 
 </div>
 
-> **One line:** A marketplace plugin + CLI that scaffolds your own focused, vertical AI agent harnesses — with their own `npx <name>` command, MCP server, memory, learning loop, and brand — that run unchanged on Claude Code, Codex, pi.dev, and Hermes.
+> **One line:** A **meta-harness** — a marketplace plugin + CLI that scaffolds your own focused, vertical AI agent harnesses with their own `npx <name>` command, MCP server, memory, learning loop, and brand — that run unchanged on Claude Code, Codex, pi.dev, Hermes, OpenClaw, and RVM.
+
+> **What's a meta-harness?** A harness is a runtime that orchestrates AI agents (memory + routing + hooks + MCP + claims). A *meta-harness* is the level above: a harness whose product is OTHER harnesses. agent-harness-generator emits self-contained, npm-publishable harnesses you OWN — same kernel, your branding, your agents, your marketplace presence. The kernel updates flow to your harness via `@ruflo/kernel` npm peer; the content stays yours.
 
 > **One paragraph:** [Ruflo](https://github.com/ruvnet/ruflo) bundles primitives (MCP server, hooks, memory bridge, swarm coordinator, intelligence pipeline, claims, routing) WITH opinionated content (60+ agents, 30+ skills, 33 plugins). `agent-harness-generator` factors those apart. You pick the primitives, pick the content, supply a name + brand, and out comes a brand-new npm-publishable harness with its own CLI, MCP registration, memory namespace, and marketplace identity — running on the host of your choice.
 
@@ -49,27 +53,39 @@
 
 ---
 
-## Architecture in 60 seconds
+## Architecture in 60 seconds — the meta-harness pattern
 
 ```
+   You                                  <- harness AUTHOR (uses the meta-harness)
+       |
+       v
+   agent-harness-generator              <- THE META-HARNESS
+   (this repo: scaffolds, signs, publishes harnesses)
+       |
+       v
+   Your harness (npm package)           <- THE HARNESS YOU SHIP
+       |
+       v
    Your users
        |
        v
-   npx <your-name>             <- Identity (rename + brand)
+   npx <your-name>                      <- Identity (rename + brand)
        |
        v
-   <your-harness>              <- Content (your agents/skills/plugins/prompts)
+   <your-harness>                       <- Content (your agents/skills/plugins/prompts)
        |
        v
-   @ruflo/kernel               <- Kernel (shared primitives, Rust + WASM + NAPI-RS)
+   @ruflo/kernel                        <- Kernel (shared primitives, Rust + WASM + NAPI-RS)
        |
        v
-   Host adapter                <- Per-host abstraction
-   (Claude Code / Codex / pi.dev / Hermes)
+   Host adapter                         <- Per-host abstraction
+   (Claude Code / Codex / pi.dev / Hermes / OpenClaw / RVM)
        |
        v
    LLM providers
 ```
+
+Read top-down: you (the harness author) operate the meta-harness. The meta-harness produces your harness. Your harness is what users install. They never see the meta-harness layer — only the brand and CLI you ship.
 
 The kernel is **Rust source code compiled to two targets**: WebAssembly (primary, cross-platform) and per-platform native binaries via [NAPI-RS](https://napi.rs/) (escape hatch for hot Node paths). At load time, [`@ruflo/kernel`](packages/kernel-js/) prefers the native package for the current platform and falls back to wasm.
 

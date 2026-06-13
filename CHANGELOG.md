@@ -4,6 +4,41 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Changed — Iter 13 (2026-06-13)
+
+- **Repositioned as a META-HARNESS** in README + USAGE.md + GitHub
+  description. agent-harness-generator is now explicitly positioned as
+  *a harness that builds other harnesses* — the level above ruflo /
+  Claude Code / etc. Architecture diagram updated to show the meta-
+  harness layer above the harness-the-user-ships layer.
+
+### Added — Iter 13 (2026-06-13)
+
+- **`@ruflo/bench` package** — reproducible memory-retrieval benchmark:
+  - 6 configs scored side-by-side (k ∈ {1,3,10} × decay ∈ {on,off})
+  - Synthetic corpus + queries deterministic via `mulberry32` seed
+  - 4-category eval (single-hop / temporal / multi-hop / open-domain)
+    matching Mem0's shape
+  - Reports recall@k, MRR, p50/p95 latency, per-category breakdown
+  - JSON report header cites the Mem0 + ReasoningBank published baselines
+    so users can compare against the real numbers
+  - The ReasoningBank k=1 finding is testable in our shape: the report
+    surfaces whether k=1 beats k=10 on temporal
+  - 10 new TS test cases (cosine, decay, rank with/without decay,
+    deterministic reproducibility, k-monotonicity)
+- **Trajectory persistence** (`packages/kernel-js/src/trajectory.ts`):
+  - `TrajectoryStore` — JSONL append-only with rotation cap
+  - `append()`, `readAll()`, `rotateIfLarger(maxBytes)`, `size()`
+  - 4 new TS test cases (append+read round-trip, empty-file handling,
+    rotation no-op + rotation fires)
+- **TS-side MCP dispatch wrapper** (`packages/kernel-js/src/dispatch.ts`):
+  - `ToolDispatcher` in-process registry + dispatch with claims check
+  - Structured outcome { result | denied | not-found | bad-args }
+  - Honors wildcard `*` capabilities, `tool.invoke.*` suffix wildcards,
+    and resource glob `agents/*`
+  - Surfaces handler exceptions as denied with the message
+  - 8 new TS test cases pinning every outcome path
+
 ### Added — Iter 12 (2026-06-13)
 
 - **Sixth host adapter: `@ruflo/host-rvm`** for
