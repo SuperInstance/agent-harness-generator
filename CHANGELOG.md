@@ -4,6 +4,34 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 27 (2026-06-13)
+
+- **`scripts/marketplace-entry.mjs`** — turns `.claude-plugin/plugin.json`
+  into the marketplace-registry JSON that gets pinned to IPFS and
+  discovered by other agents. Mirrors the shape of
+  `v3/@claude-flow/cli/src/plugins/store/discovery.ts` so the same
+  browsing UI consumes it without modification. Modes:
+  - `--print` (stdout, for piping into `pinata pin file -`)
+  - `--validate` (validate-only; no file written)
+  - default (writes `dist/marketplace-entry.json`)
+- **`buildMetaEntry()` + `validateEntry()`** — exported from the script
+  for programmatic use (and the new test). Witness signature + IPFS
+  CIDs are optional fields the publish pipeline fills in.
+- **`__tests__/marketplace-entry.test.ts`** (6 cases) — pins the entry
+  shape against the live plugin.json:
+  - well-formed entry from live data
+  - skills match iter-22 (`create-harness, publish-harness,
+    validate-harness, harness-secrets`) — catches codex↔marketplace
+    drift in either direction
+  - tags include 6-host catalog (`openclaw`, `rvm`, `claude-code`)
+  - witness/ipfs slots present only when input provides them
+  - rejects too-short descriptions (<30 chars)
+  - `validateEntry()` catches missing required fields
+- **CI milestone**: iter-26 commit `ae99075` was the FIRST run where
+  all 12 jobs went green simultaneously (Rust×3 + WASM×3 + Node20+22×3).
+  The path-guard fix unblocked the Node lane.
+- TS suite: **326/326** (up from 320).
+
 ### Fixed — Iter 26 (2026-06-13)
 
 - **path-guard scanner was finding itself** — the Node CI jobs had
