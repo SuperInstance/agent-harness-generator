@@ -4,6 +4,33 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 14 (2026-06-13)
+
+- **`@ruflo/sdk` convenience helpers** for harness authors:
+  - `defineAgent` / `defineSkill` / `defineTool` / `defineHook` /
+    `defineMcpServer` / `defineHarness`
+  - Every helper returns a frozen object (immutable post-definition)
+  - Validates kebab-case names, non-empty system prompts, valid tiers,
+    XOR command/url on MCP servers, name collisions across agents/skills
+  - 18 new TS test cases pinning every validation rule + collision
+    detection + freeze invariant
+- **Browser-runtime WASM smoke fixture** (`__tests__/browser-smoke/`):
+  - `fixture.html` loads `@ruflo/kernel`'s wasm bundle in a real browser
+  - Runs the 3 key exports (`kernelInfo`, `mcpValidate` pass + reject)
+  - Sets `window.__SMOKE_RESULT` for Playwright to read in iter 16
+  - README documents how to serve the fixture today
+- **Pre-publish validation script** (`scripts/preflight.mjs`):
+  - 11 gates (git clean, on-main warn, version consistency, READMEs,
+    publishConfig, CHANGELOG iter entry, LICENSE MIT, cargo fmt/clippy/
+    test, wasm-pack build + size budget, npm test)
+  - `--skip-wasm` and `--skip-rust` for faster local iterations
+- **Release runbook** (`docs/RELEASE.md`):
+  - 9-package release matrix (kernel + sdk + 6 host adapters + cli)
+  - Step-by-step process: preflight → bump → tag → workflow fires →
+    verify
+  - Rollback policy (npm deprecate, never unpublish unless < 72h)
+  - Dry-run workflow trigger for validating GCP auth without publishing
+
 ### Changed — Iter 13 (2026-06-13)
 
 - **Repositioned as a META-HARNESS** in README + USAGE.md + GitHub

@@ -1,0 +1,37 @@
+{
+  "name": "@ruflo/sdk",
+  "version": "0.1.0",
+  "description": "Convenience helpers for harness authors — defineHarness, defineAgent, defineSkill, defineTool. Light wrappers around @ruflo/kernel.",
+  "homepage": "https://github.com/ruvnet/agent-harness-generator",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ruvnet/agent-harness-generator.git",
+    "directory": "packages/sdk"
+  },
+  "license": "MIT",
+  "author": "rUv <ruv@ruv.net>",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist/**", "README.md"],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run --passWithNoTests",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": ["agent-harness", "sdk", "kernel", "ruflo"],
+  "publishConfig": { "access": "public" },
+  "dependencies": { "@ruflo/kernel": "0.1.0" },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  },
+  "engines": { "node": ">=20.0.0" }
+}
