@@ -4,6 +4,29 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 29 (2026-06-13)
+
+- **`scripts/version-bump.mjs`** — atomic cross-package version sync.
+  Bumps EVERY `package.json` under the repo (root + 12 workspace packages
+  + `.claude-plugin/plugin.json`) plus `Cargo.toml`'s
+  `[workspace.package].version` in a single deterministic pass. The
+  existing `preflight.mjs` already catches version drift across packages
+  — this script makes the inverse (synchronised bump) a one-command op.
+  - `node scripts/version-bump.mjs patch|minor|major|<x.y.z>`
+  - `--dry-run` for safe diff preview
+  - Workspace deps to other `@ruflo/*` packages get bumped in lockstep
+    (so `host-rvm` → `@ruflo/kernel ^0.1.0` becomes `^0.1.1` together)
+- **`__tests__/version-bump.test.ts`** (7 cases) — pins the cross-pack
+  lockstep invariant inside a tmpdir fixture so the test is fully
+  hermetic:
+  - patch / minor / major / explicit-version bumps
+  - workspace deps to other `@ruflo/*` packages updated in lockstep
+  - `--dry-run` doesn't touch files
+  - rejects unparseable target with non-zero exit
+- CI milestone: iter-28 commit `7b9bbcf` ran with all 12 core matrix
+  jobs GREEN — **second consecutive iter at full green**.
+- TS suite: **333/333** (up from 326).
+
 ### Added — Iter 28 (2026-06-13)
 
 - **Marketplace entry generation + IPFS pin wired into `publish.yml`**
