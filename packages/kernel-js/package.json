@@ -17,6 +17,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./memory": {
+      "types": "./dist/memory.d.ts",
+      "import": "./dist/memory.js"
     }
   },
   "files": [
@@ -32,6 +36,9 @@
   },
   "keywords": ["agent-harness", "mcp", "wasm", "kernel", "ruflo"],
   "publishConfig": { "access": "public" },
+  "dependencies": {
+    "@ruvector/emergent-time": "^0.1.0"
+  },
   "optionalDependencies": {
     "@ruflo/kernel-darwin-arm64": "0.1.0",
     "@ruflo/kernel-darwin-x64": "0.1.0",
