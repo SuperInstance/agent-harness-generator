@@ -4,6 +4,32 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 40 (2026-06-13)
+
+- **`examples/federation/federation.mjs`** — second runnable example
+  (after the iter-32 quickstart). 7-step bidirectional handshake that
+  exercises the federation transport from iter 9 without a real
+  network:
+  1. provision two harness tmpdirs (host-A, host-B)
+  2. initialise federation state on each
+  3. each side adds the other as a trusted peer
+  4. round-trip both states through disk + reload
+  5. trust-tier filter (only trusted peers)
+  6. asymmetric demotion (A removes B, B retains A)
+  7. summary + cleanup
+- Runs in ~20ms. Imports from built `dist/` so no TS toolchain needed.
+- **`examples/README.md` updated**: federation now marked runnable (was
+  "docs"), with the new script and timing called out.
+- **`__tests__/examples-federation.test.ts`** (3 cases):
+  - script + README exist
+  - 7-step handshake runs to completion (regression check that pins
+    the 7 step markers, so removing one fails CI)
+  - asymmetric demotion verified (`A now has 0 peer(s)` +
+    `B still has 1 peer(s)`)
+- Examples directory now has 2 runnable + 1 docs-only. Next iters can
+  add `multi-host/multi-host.mjs` if user-facing demand surfaces.
+- TS suite: **405/405** (up from 402).
+
 ### Added — Iter 39 (2026-06-13)
 
 - **Cross-host config-gen benchmark** —
