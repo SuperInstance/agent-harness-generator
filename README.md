@@ -241,6 +241,7 @@ You operate the factory. The factory produces your harness. Your users never see
 | **Security** | [`security.yml`](.github/workflows/security.yml) — cargo-audit + cargo-deny + npm-audit + CodeQL + weekly cron |
 | **Provenance** | [ADR-011](docs/adrs/ADR-011-witness-and-provenance.md) — Ed25519-signed witness manifest, byte-deterministic across runners |
 | **Studio liveness** | [`pages-monitor.yml`](.github/workflows/pages-monitor.yml) — daily HTTP probe of live Studio |
+| **Research quality (DRACO)** | [`draco.yml`](.github/workflows/draco.yml) — cross-domain deep-research benchmark ([ADR-037](docs/adrs/ADR-037-draco-deep-research-benchmark.md)). Deterministic subset gates the scorer/runner machinery on every push (offline); a weekly judged cadence runs the real OpenRouter-fusion score. 5 dimensions (grounding/coverage/balance/cleanliness/faithfulness); the verifier + judge are different model families than the synthesizer (fusion). See [`packages/bench/draco/`](packages/bench/draco/). |
 
 ---
 

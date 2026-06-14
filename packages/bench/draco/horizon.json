@@ -80,7 +80,15 @@
     },
     "M5": {
       "name": "harness draco subcommand + bench-baseline regression gate + CI job + README score row",
-      "status": "PENDING"
+      "status": "PARTIAL",
+      "completedParts": [
+        "bench-baseline.mjs DRACO-aware (tokens/usd lower-is-better)",
+        "draco.yml CI: deterministic gate on every push + judged cadence (key-gated, skips cleanly)",
+        "README Quality-gates DRACO row"
+      ],
+      "remaining": [
+        "harness draco subcommand (ADR-031 bundle) — deferred to M5b; needs design re: running DRACO against a scaffolded research harness vs the corpus runner"
+      ]
     },
     "M6": {
       "name": "Fusion-vs-single-model ablation — the proof",
@@ -90,7 +98,7 @@
   },
   "lastSession": {
     "date": "2026-06-14",
-    "accomplished": "M1-M4 complete + pushed. M4: judge.ts (pinned google/gemini-2.5-pro judge, THIRD family, independence-enforced, prompt v1, fails closed) + runner judged mode (5-dim mean) + draco-bin --live judged / --no-judge opt-out + 14 mocked tests. 70/70 bench tests.",
-    "nextAction": "M5 — wire DRACO into the product surfaces: (1) a `harness draco` CLI subcommand (ADR-031 bundle shape) that runs DRACO against a scaffolded research harness; (2) extend bench-baseline.mjs to track a DRACO baseline + fail CI on a quality regression > threshold; (3) a published-smoke / scheduled CI `draco` job that runs the --no-judge deterministic subset on every push (offline, mock) and a full judged run on a cadence (needs OPENROUTER_API_KEY in CI from GCP via the iter-145 secret-list gate); (4) a README Benchmarks row. M6 after that is the fusion-vs-single-model ablation (THE proof) — needs a live key, so it runs in the cadence job and writes the comparison."
+    "accomplished": "M5 partial: bench-baseline DRACO regression gate (129 metrics, verified no-regression vs committed baseline) + .github/workflows/draco.yml (deterministic per-push + weekly judged cadence, OPENROUTER_API_KEY-gated, skips cleanly) + README row.",
+    "nextAction": "M5b — harness draco subcommand emitting an ADR-031 bundle, then M6 — the fusion-vs-single-model ablation (THE proof): same corpus, single-model end-to-end vs the fusion harness, prove the different-verifier+judge design wins on grounding+faithfulness. M6 needs a live key so it runs in the draco-judged cadence job."
   }
 }

@@ -50,7 +50,11 @@ export function flattenMetrics(obj, prefix = '') {
     const p = prefix ? `${prefix}/${k}` : k;
     if (typeof v === 'number') {
       const lower = HIGHER_IS_BETTER.has(k.toLowerCase()) ? 'higher' : (
-        /ms|latency|cost|size|count|p\d|wall/i.test(k) ? 'lower' :
+        // iter-154: 'tokens' + 'usd' added for DRACO efficiency (more tokens /
+        // more $ = worse). DRACO quality metrics (score, grounding, coverage,
+        // balance, cleanliness, faithfulness, mean, per-domain) all default to
+        // higher-is-better, which is correct.
+        /ms|latency|cost|usd|size|count|tokens?|p\d|wall/i.test(k) ? 'lower' :
         'higher'  // default to higher-is-better for unknown keys
       );
       out.push({ path: p, value: v, kind: lower });
