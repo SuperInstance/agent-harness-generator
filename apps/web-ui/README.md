@@ -1,22 +1,29 @@
-# Agent Harness Generator — Web UI
+# Agent Harness Studio — Web UI
 
-A **100% client-side** generator for AI agent harnesses and Claude skills/agents/commands. Pick primitives, pick content, supply identity → download a zip. No backend, no install, nothing leaves your browser. Deployable to GitHub Pages; desktop- and mobile-friendly.
+A **100% client-side** Studio for the agent-harness supply chain: turn any GitHub repo (or a blank slate) into a governed, branded, multi-host AI agent harness — recommend, build, verify, ship. No backend, no install, nothing leaves your browser. Deployable to GitHub Pages; desktop- and mobile-friendly.
 
-> Design rationale: [ADR-020 — Web generator UI](../../docs/adrs/ADR-020-web-generator-ui.md) · [ADR-021 — Client-side packaging + Pages deploy](../../docs/adrs/ADR-021-client-side-packaging-and-pages-deploy.md)
+> Design: [ADR-020](../../docs/adrs/ADR-020-web-generator-ui.md) · [ADR-021](../../docs/adrs/ADR-021-client-side-packaging-and-pages-deploy.md) · [ADR-022 (MCP)](../../docs/adrs/ADR-022-mcp-primitive.md) · [ADR-023 (Repo→Harness)](../../docs/adrs/ADR-023-repo-to-harness-importer.md) · [ADR-024 (Studio+Verify)](../../docs/adrs/ADR-024-studio-and-verify.md)
 
-![Desktop](../../docs/web-ui/screenshot-desktop.png)
+![Studio](../../docs/web-ui/screenshot-desktop.png)
 
-## Two modes
+## Four tabs
 
-| Mode | What you get |
+| Tab | What you get |
 |---|---|
-| **Full harness** | Name, host(s), template, kernel options, and a composable pick-list of agents / skills / commands. Live file tree + viewer. Downloads the whole scaffold as `<name>.zip`, byte-compatible with `create-agent-harness`. |
-| **Skill / Agent / Command** | Author or pick a single artifact. Skills emit a `SKILL.md` with YAML frontmatter in their own folder — drop straight into Claude desktop / claude.ai. Download as `.md` or `.zip`. |
+| **Repo → Harness** | Paste a GitHub URL → deterministic analysis (languages, build/test commands, MCP/host/CI signals) → archetype scoring → an editable harness plan with a confidence panel. No repo code executed; suggested commands are `trust: inferred · execution: disabled`. |
+| **Create harness** | 16 quick-start verticals, composable agents/skills/commands, kernel options, and the **Primitives** panel (CLI · MCP · memory · learning · witness · release gates). Live file tree + `<name>.zip`. |
+| **Skill / Agent / Command** | Author or pick a single Claude artifact → drop-in `SKILL.md` folder (YAML frontmatter). |
+| **Verify** | Drop a generated `.zip` → unzipped + checked in-browser (structure, kernel dep, host wiring, unresolved vars, MCP policy, secrets). |
 
 <p align="center">
-  <img src="../../docs/web-ui/screenshot-artifact.png" width="48%" alt="Artifact mode" />
-  <img src="../../docs/web-ui/screenshot-mobile.png" width="24%" alt="Mobile" />
+  <img src="../../docs/web-ui/screenshot-repo.png" width="32%" alt="Repo → Harness" />
+  <img src="../../docs/web-ui/screenshot-artifact.png" width="32%" alt="Artifact authoring" />
+  <img src="../../docs/web-ui/screenshot-verify.png" width="32%" alt="Verify" />
 </p>
+
+## MCP — modular, gated, security-first
+
+MCP is one selectable primitive (`off` / `local` / `remote`), default-deny. Enabling it emits `src/mcp/{server,tools,resources,prompts,policy,audit}.ts` (+ `auth.ts` remote) and a scannable `.harness/mcp-policy.json`. Safe defaults: no network/shell/file-write, approve-dangerous, 30 s timeout, 8 calls/turn, audit on. See [ADR-022](../../docs/adrs/ADR-022-mcp-primitive.md) and the CLI's `harness mcp-scan`.
 
 ## Develop
 
@@ -26,46 +33,52 @@ npm install
 npm run dev        # http://localhost:5173 (served at root)
 ```
 
-## Test
+## Test · bench · screenshots
 
 ```bash
-npm test           # 27 generator unit tests (Vitest)
-npm run e2e        # Playwright e2e — desktop + mobile, asserts zero console errors
+npm test           # 48 generator unit tests (Vitest)
+npm run e2e        # Playwright — desktop + mobile, zero console errors
+npm run bench      # generator hot-path micro-bench (sub-100µs/op, 2ms budget)
 npm run shot       # regenerate the README screenshots
 ```
 
 ## Build & deploy
 
 ```bash
-npm run build              # base = /agent-harness-generator/ (GitHub Pages subpath)
-VITE_BASE=/ npm run build  # base = / (custom domain or root deploy)
-npm run preview
+npm run build              # base = /agent-harness-generator/ (GitHub Pages)
+VITE_BASE=/ npm run build  # base = / (custom domain or root)
 ```
 
-Pushing changes under `apps/web-ui/**` to `main` triggers [`.github/workflows/pages.yml`](../../.github/workflows/pages.yml), which runs the unit + e2e gates and then deploys to GitHub Pages. The deploy is blocked if either gate is red.
+Pushing changes under `apps/web-ui/**` to `main` triggers [`pages.yml`](../../.github/workflows/pages.yml): unit + e2e gates, then deploy. A red gate blocks the deploy. Vendor chunks (`react`, `zip`) are split from app code for CDN caching.
 
-### Base path
+## How it stays faithful
 
-The Vite `base` defaults to `/agent-harness-generator/` for Pages. Override with `VITE_BASE=/` for local/root serving, or set it to your own subpath if you fork under a different repo name.
+- **Generator parity** — `src/generator/render.ts` is a behaviour-for-behaviour port of the CLI renderer; templates/agents/skills/commands come from the generated `src/generated/catalog.ts` (single source of truth in `packages/create-agent-harness/templates/catalog.def.mjs`).
+- **Determinism** — `analyzeFiles` / `recommendPlan` / `buildScaffold` are pure; the same repo at the same commit yields the same plan and the same zip bytes (fixed-date archive). Proven by a determinism test.
+- **Invariant** — embeddings recommend, rules generate, tests prove parity.
 
-## How it stays faithful to the CLI
+## Security note (dev-only)
 
-`src/generator/render.ts` is a behaviour-for-behaviour port of `packages/create-agent-harness/src/renderer.ts` — same `{{var}}` templating, same `validateHarnessName` rules, same per-host file shapes (ADR-004). A parity test pins it so the web path can't silently drift from what `npx create-agent-harness` produces.
+`npm audit` reports advisories in the **dev** toolchain (esbuild → vite → vitest); the esbuild one is a dev-server issue. None of these ship in the static GitHub Pages build — the deployed artifact contains no esbuild/vite runtime. The fix is a breaking `vite@8` bump, deferred. The product's security model (default-deny MCP, `mcp-scan`, in-browser Verify, witness signing) is unaffected.
 
 ## Layout
 
 ```
 apps/web-ui/
 ├─ src/
-│  ├─ generator/        # framework-free generator core (ported + tested)
-│  │  ├─ render.ts      # {{var}} renderer + name validation (CLI parity)
-│  │  ├─ catalog.ts     # hosts, templates, agents, skills, commands
-│  │  ├─ artifacts.ts   # single Claude SKILL.md / agent / command builders
-│  │  ├─ scaffold.ts    # full harness file tree
-│  │  ├─ zip.ts         # JSZip + Blob download (deterministic)
-│  │  └─ __tests__/     # 27 unit tests
-│  ├─ components/       # HarnessBuilder, ArtifactBuilder, FileTree, ui
+│  ├─ generator/            # framework-free generator core (pure + tested)
+│  │  ├─ render.ts          # {{var}} renderer + name validation (CLI parity)
+│  │  ├─ catalog.ts         # re-exports the generated catalog + HOSTS
+│  │  ├─ artifacts.ts       # single Claude SKILL.md / agent / command builders
+│  │  ├─ scaffold.ts        # full harness file tree
+│  │  ├─ mcp.ts             # MCP primitive (ADR-022)
+│  │  ├─ repo.ts            # Repo → Harness analyzer + archetypes (ADR-023)
+│  │  ├─ verify.ts          # in-browser harness verifier (ADR-024)
+│  │  ├─ zip.ts             # JSZip + Blob download (deterministic)
+│  │  └─ __tests__/         # 48 unit tests
+│  ├─ generated/catalog.ts  # GENERATED — do not edit (npm run gen:templates)
+│  ├─ components/           # HarnessBuilder, ArtifactBuilder, RepoImporter, VerifyPanel, FileTree, ui
 │  └─ App.tsx
-├─ e2e/                 # Playwright desktop + mobile specs
-└─ scripts/screenshot.mjs
+├─ e2e/                     # Playwright desktop + mobile specs
+└─ scripts/                 # screenshot.mjs, bench.mjs
 ```

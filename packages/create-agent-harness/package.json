@@ -19,7 +19,8 @@
   "scripts": {
     "build": "tsc",
     "test": "vitest run --passWithNoTests",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "gen:templates": "node scripts/gen-templates.mjs"
   },
   "keywords": [
     "agent-harness",
