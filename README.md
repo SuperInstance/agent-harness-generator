@@ -68,6 +68,16 @@ MCP is included as a first-class adapter surface, **not** the core identity. It 
 - Safe defaults: default-deny, no network/shell/file-write, approve-dangerous, 30 s timeout, 8 calls/turn, audit on.
 - `harness mcp-scan <path>` — *"npm audit for agent tools"*: static-only scan (never executes) flagging shell/network grants, missing audit/timeouts, wildcard permissions, unguarded secrets, and unpinned deps. Exit 1 on any HIGH.
 
+**CLI Repo → Harness** ([ADR-026](docs/adrs/ADR-026-cli-repo-analyzer-ruvllm.md)) — the deeper, local counterpart to the Studio's importer:
+
+```bash
+harness analyze-repo .                       # local, analysis-only → repo-profile.json + harness-plan.json
+harness analyze-repo . --embed               # opt-in deterministic embeddings via @ruvector/ruvllm (offline; lexical fallback)
+harness analyze-repo . --scaffold my-harness # materialise the recommended harness
+```
+
+No repository code is executed; inferred build/test commands are emitted as `trust: inferred · execution: disabled`.
+
 ### Quick start
 
 ```bash

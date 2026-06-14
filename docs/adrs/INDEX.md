@@ -59,6 +59,7 @@ ADR-006 (memory + learning) and ADR-008 (drift detection) cut across all phases.
 | [ADR-023](./ADR-023-repo-to-harness-importer.md) | Repo → Harness importer | Accepted | Paste a GitHub URL → deterministic file inventory + archetype scoring → editable harness plan. Embeddings recommend, rules generate, tests prove parity; no repo code executed. |
 | [ADR-024](./ADR-024-studio-and-verify.md) | Agent Harness Studio + in-browser Verify | Accepted | Four-tab Studio (Repo→Harness / Create harness / Skill·Agent·Command / Verify). `verifyFileMap` validates a dropped zip in-browser — structure + MCP policy + secrets — no upload. |
 | [ADR-025](./ADR-025-browser-embeddings-minilm.md) | Browser embeddings (Transformers.js MiniLM) | Accepted | Implements the ADR-023 `semantic` term with optional, lazy, WebGPU/WASM MiniLM (`all-MiniLM-L6-v2`). Injected into the rule-based scorer; rounded for determinism; lexical fallback stays the default so the deploy needs no model. |
+| [ADR-026](./ADR-026-cli-repo-analyzer-ruvllm.md) | CLI repo analyzer + ruvllm | Accepted | `harness analyze-repo [path]` — local, analysis-only repo → plan, mirroring the browser core. Opt-in `--embed` via `@ruvector/ruvllm` (deterministic, offline, optionalDependency) with lexical fallback; writes repo-profile.json + harness-plan.json. |
 
 ## Conventions used across the series
 
