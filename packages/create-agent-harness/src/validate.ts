@@ -17,7 +17,7 @@
 // Exits non-zero if any check fails. Structured output suits both human eyes
 // and `grep PASS|FAIL` for CI.
 
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { doctor, verify } from './subcommands.js';
@@ -130,6 +130,39 @@ async function runMcpCheck(dir: string): Promise<CheckResult> {
  * always so a kernel skew never blocks the umbrella verdict; surfaces
  * the state via the tag override field (PASS / WARN / SKIP).
  */
+/**
+ * iter 123: check #7 (informational). ADR-034 §134 specifies the OIA
+ * manifest should be shape-validated by `harness validate` so a drifted
+ * .harness/oia-manifest.json gets surfaced alongside the other gates.
+ *
+ * Informational on purpose:
+ *   - manifest absent  → SKIP (OIA opt-in, not required)
+ *   - manifest valid   → PASS
+ *   - manifest drifted → WARN (reported but does NOT fail the umbrella;
+ *     OIA v0.1 is pre-stable, drift may be a v1.0 migration in progress)
+ *   - manifest corrupt → WARN (same reasoning)
+ *
+ * The user can promote this to FAIL by running `harness oia-manifest
+ * <dir> --check` directly in CI.
+ */
+async function runOiaManifest(dir: string): Promise<CheckResult> {
+  const manifestPath = join(dir, '.harness', 'oia-manifest.json');
+  if (!existsSync(manifestPath)) {
+    return { name: 'oia', code: 0, tag: 'SKIP', detail: 'no .harness/oia-manifest.json (OIA opt-in)' };
+  }
+  try {
+    const { checkOiaManifest } = await import('./oia-manifest.js');
+    const m = JSON.parse(readFileSync(manifestPath, 'utf-8'));
+    const r = checkOiaManifest(m);
+    if (r.ok) {
+      return { name: 'oia', code: 0, tag: 'PASS', detail: `oia-manifest shape ok (oiaVersion=${m.oiaVersion ?? '?'})` };
+    }
+    return { name: 'oia', code: 0, tag: 'WARN', detail: `oia-manifest drift: ${r.reasons.length} issue(s) — run \`harness oia-manifest ${dir} --check\` for detail` };
+  } catch (e) {
+    return { name: 'oia', code: 0, tag: 'WARN', detail: `oia-manifest parse error (${String(e).slice(0, 50)})` };
+  }
+}
+
 async function runDiag(dir: string): Promise<CheckResult> {
   if (!existsSync(join(dir, '.harness', 'manifest.json'))) {
     return { name: 'diag', code: 0, tag: 'SKIP', detail: 'no manifest at path' };
@@ -189,6 +222,13 @@ export async function validate(args: string[]): Promise<SubcommandResult> {
   // no kernel installed locally.
   results.push(await runDiag(dir));
 
+  // iter 123: OIA manifest shape check (ADR-034 §134) as informational
+  // signal. Never fails the umbrella — OIA at v0.1 is pre-stable, and
+  // the manifest is opt-in (no manifest = SKIP). PASS on valid shape,
+  // WARN on drift or parse error. Users who want CI-blocking validation
+  // run `harness oia-manifest <dir> --check` directly.
+  results.push(await runOiaManifest(dir));
+
   let problems = 0;
   for (const r of results) {
     const tag = r.tag ?? (r.code === 0 ? 'PASS' : 'FAIL');
@@ -203,9 +243,10 @@ export async function validate(args: string[]): Promise<SubcommandResult> {
   lines.push(`Result: ${problems} check${problems === 1 ? '' : 's'} FAILED — fix before publish`);
   // iter 94: symmetric with iter 93 — when the umbrella FAILs, point
   // the user at the bundle. Doctor already does this for its own
-  // failures, but the umbrella aggregates 6 checks (doctor + verify +
-  // path-guard + mcp + secrets + diag) — any of them failing should
-  // surface the bundle as the next user action.
+  // failures, but the umbrella aggregates 7 checks (doctor + verify +
+  // path-guard + mcp + secrets + diag + oia) — any of them failing
+  // should surface the bundle as the next user action. The diag and
+  // oia checks are informational — they never fail the umbrella.
   lines.push('');
   lines.push(`Next: capture the full diagnostic state for a support ticket:`);
   lines.push(`  harness diag ${dir} --bundle > bundle.json`);
