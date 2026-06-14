@@ -4,6 +4,25 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 68 (2026-06-14)
+
+- **`harness diag` chained into the iter-52 e2e lifecycle test** as
+  the 11th subcommand step. Before iter 68 the lifecycle pinned that
+  10 subcommands (doctor / verify / sbom / audit / upgrade / publish /
+  federate / etc.) all worked end-to-end on a single scaffolded
+  harness — but iter 66's diag was added after iter 52 and was never
+  chained in. iter 68 closes that gap.
+- The new step asserts:
+  - `diagCmd` exits 0 on a fresh scaffold (matches manifest +
+    locally-resolved @ruflo/kernel)
+  - The output line `PASS kernel versions match` is present
+  - **Implicitly**: none of doctor / verify / mcp-scan / sbom / audit /
+    upgrade / publish / federate corrupted the iter-58 `meta.kernel_version`
+    or iter-56 `meta.surface` fields on the manifest. The whole lifecycle
+    is metadata-safe.
+- Test suite still **549/549** locally; iter 68 strengthens an existing
+  test rather than adding a new case.
+
 ### Fixed — Iter 67 (2026-06-14)
 
 - **Shell completions catch up with the dispatcher** — previously the

@@ -40,10 +40,11 @@ import { auditCmd } from '../packages/create-agent-harness/src/audit-cmd.js';
 import { upgradeCmd } from '../packages/create-agent-harness/src/upgrade-cmd.js';
 import { publishCmd } from '../packages/create-agent-harness/src/publish-cmd.js';
 import { federateDispatch } from '../packages/create-agent-harness/src/federate.js';
+import { diagCmd } from '../packages/create-agent-harness/src/diag.js';
 
 const GEN_VERSION = '0.1.0';
 
-describe('e2e lifecycle: scaffold → all 12 subcommands', () => {
+describe('e2e lifecycle: scaffold → all 13 subcommands (iter 52 + iter 66 diag)', () => {
   it('every subcommand survives the chain', async () => {
     const dir = await mkdtemp(join(tmpdir(), 'ahg-lifecycle-'));
     try {
@@ -101,6 +102,17 @@ describe('e2e lifecycle: scaffold → all 12 subcommands', () => {
       // federateDispatch takes cwd as a SECOND positional arg, not in args[].
       const fr = await federateDispatch(['init', 'self-id'], dir);
       expect(fr.code, `federate:\n${fr.lines.join('\n')}`).toBe(0);
+
+      // 11. diag (iter 66) — kernel-version skew check. On a fresh
+      // scaffold the manifest.meta.kernel_version (stamped by iter 58)
+      // matches the locally-resolved @ruflo/kernel, so we expect PASS
+      // and exit 0. This pins that ADR-027's diagnostic loop survives
+      // every other lifecycle step above — none of doctor / verify /
+      // mcp-scan / sbom / audit / upgrade / publish / federate corrupt
+      // the meta block.
+      const dg = await diagCmd([dir]);
+      expect(dg.code, `diag:\n${dg.lines.join('\n')}`).toBe(0);
+      expect(dg.lines.join('\n')).toMatch(/PASS kernel versions match/);
     } finally {
       await rm(dir, { recursive: true, force: true });
     }
