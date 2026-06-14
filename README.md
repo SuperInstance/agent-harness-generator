@@ -226,4 +226,52 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 MIT — see [LICENSE](LICENSE).
 
-> **Keywords:** agent harness, AI agent scaffolding, repo-to-agent, MCP server, Claude Code plugin, Codex plugin, pi.dev extension, hermes agent, openclaw, RVM, agentic workflow, multi-agent framework, vertical AI, Rust WASM kernel, NAPI-RS, agent memory, witness manifest, SBOM, SLSA provenance, GCP WIF, plugin marketplace.
+## FAQ
+
+### What is MintAgent?
+
+MintAgent is a CLI and browser Studio that turns any GitHub repo (or a
+blank slate) into a custom AI agent harness. The output is a branded,
+npm-publishable package with its own `npx <name>` CLI, MCP server, memory,
+governance policy, and Ed25519 witness-signed releases. Runs on Claude
+Code, OpenAI Codex, pi.dev, Hermes, OpenClaw, and RVM.
+
+### How is MintAgent different from an agent framework?
+
+Frameworks help **developers** build agents. MintAgent helps
+**repositories** ship agents. The model is replaceable; the harness is
+the product.
+
+### Do I need to run a server?
+
+No. The Studio is 100% client-side (GitHub Pages). The CLI runs locally.
+There is no MintAgent account, no hosted backend, no telemetry.
+
+### Does it execute my code during analysis?
+
+No. `mintagent analyze` and `mintagent genome` are deterministic
+static-analysis only. Inferred build/test commands are marked
+`trust: inferred · execution: disabled`.
+
+### Which agent runtimes does it support?
+
+Six today: Claude Code, OpenAI Codex, pi.dev, Hermes (Nous Research),
+OpenClaw, and RVM. GitHub Copilot and GitHub Actions are proposed in
+ADR-032 and ADR-033.
+
+### What languages does it understand?
+
+Rust, TypeScript / JavaScript, Python, and Go are detected
+deterministically via lockfile and manifest probing. Lexical scoring is
+the default; optional in-browser MiniLM embeddings via Transformers.js
+boost recall for unusual repos.
+
+### Is the output really npm-publishable?
+
+Yes — the generated harness ships with `package.json`, `bin`, a working
+CLI, and `harness validate` to gate releases. `harness sign` adds the
+Ed25519 witness; `harness sbom` emits SPDX-2.3.
+
+---
+
+> **Keywords:** mintagent, AI agent CLI, AI agent scaffold, AI agent generator, repo to agent, GitHub repo to AI agent, agent harness, agent harness generator, agent framework alternative, agentic AI, agentic workflow, autonomous AI agents, multi-agent framework, multi-agent system, MCP, MCP server, model context protocol, Claude Code plugin, OpenAI Codex plugin, Anthropic agents, GPT agent, Codex agent, pi.dev extension, hermes agent, Nous Research, OpenClaw, RVM agent, vertical AI agents, custom AI CLI, npx mintagent, npm create AI agent, Rust WASM agent kernel, NAPI-RS, wasm-bindgen, agent memory, ReasoningBank, HNSW vector search, emergent time, witness manifest, Ed25519 signed, provenance, SBOM, SPDX, SLSA, plugin marketplace, IPFS registry, drift detection, anti-slop, TDD agents, self-evolving agents, federated agents, swarm intelligence, GCP Workload Identity Federation, Secret Manager, npm provenance, repo-aware AI, repo-native CLI, repo factory.

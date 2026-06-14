@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react';
-import { X, Sparkles, GitBranch, FileText, ShieldCheck, ArrowRight, Boxes } from 'lucide-react';
+import { X, Sparkles, GitBranch, FileText, ShieldCheck, ArrowRight, Boxes, Rocket } from 'lucide-react';
 
 const STORAGE_KEY = 'ahg-onboarding-dismissed-v1';
+
+/** Starting points the modal can launch into. App.tsx maps these to tabs. */
+export type StartingPoint = 'repo' | 'harness' | 'artifact' | 'verify';
 
 interface OnboardingModalProps {
   /** Programmatic open (e.g. from a Help button). When undefined, modal
    *  decides based on localStorage. */
   forceOpen?: boolean;
   onClose?: () => void;
+  /** iter 117 — Getting Started action launcher. The modal calls this
+   *  when the user picks a starting point on the final step. Use it to
+   *  switch the active tab. */
+  onStart?: (point: StartingPoint) => void;
 }
 
 const STEPS = [
@@ -69,7 +76,41 @@ const STEPS = [
   },
 ];
 
-export function OnboardingModal({ forceOpen, onClose }: OnboardingModalProps) {
+interface StartChoice {
+  point: StartingPoint;
+  label: string;
+  blurb: string;
+  icon: typeof Boxes;
+}
+
+const START_CHOICES: StartChoice[] = [
+  {
+    point: 'repo',
+    label: 'Paste a GitHub URL',
+    blurb: 'I have a repo. Generate a harness shaped to it.',
+    icon: GitBranch,
+  },
+  {
+    point: 'harness',
+    label: 'Start from blank',
+    blurb: 'Pick a vertical template, name it, download.',
+    icon: Sparkles,
+  },
+  {
+    point: 'artifact',
+    label: 'Author one skill',
+    blurb: 'Just a SKILL.md folder for Claude desktop / claude.ai.',
+    icon: FileText,
+  },
+  {
+    point: 'verify',
+    label: 'Verify a .zip',
+    blurb: 'Drag a downloaded harness in to inspect it safely.',
+    icon: ShieldCheck,
+  },
+];
+
+export function OnboardingModal({ forceOpen, onClose, onStart }: OnboardingModalProps) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
 
@@ -151,6 +192,39 @@ export function OnboardingModal({ forceOpen, onClose }: OnboardingModalProps) {
             </li>
           ))}
         </ul>
+
+        {/* iter 117 — Getting Started action launcher on the final step. */}
+        {isLast && (
+          <div className="mb-5 rounded-xl border border-brand/30 bg-brand/5 p-3 sm:p-4">
+            <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-brand-glow">
+              <Rocket size={12} /> Getting started
+            </div>
+            <p className="mb-3 text-xs text-slate-400">Pick your starting point — we'll jump you to the right tab.</p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {START_CHOICES.map((c) => {
+                const CIcon = c.icon;
+                return (
+                  <button
+                    key={c.point}
+                    onClick={() => {
+                      onStart?.(c.point);
+                      dismiss(true);
+                    }}
+                    className="group flex items-start gap-2 rounded-lg border border-ink-700 bg-ink-800/60 p-2.5 text-left transition hover:border-brand/60 hover:bg-ink-800"
+                  >
+                    <div className="rounded-md border border-ink-700 bg-ink-900 p-1.5 text-slate-400 transition group-hover:border-brand/50 group-hover:text-brand-glow">
+                      <CIcon size={14} />
+                    </div>
+                    <div className="flex-1 text-sm">
+                      <div className="font-medium text-white">{c.label}</div>
+                      <div className="mt-0.5 text-[11px] leading-snug text-slate-400">{c.blurb}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Progress dots */}
         <div className="mb-4 flex justify-center gap-1.5">

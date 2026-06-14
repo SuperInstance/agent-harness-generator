@@ -92,6 +92,10 @@ export default function App() {
       <OnboardingModal
         forceOpen={forceOnboarding}
         onClose={() => setForceOnboarding(undefined)}
+        onStart={(point) => {
+          setMode(point as Mode);
+          setForceOnboarding(undefined);
+        }}
       />
 
 
