@@ -26,6 +26,7 @@ import { mcpScanCmd } from './mcp-scan.js';
 import { diagCmd } from './diag.js';
 import { exportConfigCmd } from './export-config.js';
 import { compareCmd } from './compare-cmd.js';
+import { genomeCmd } from './genome.js';
 import { analyzeRepoCmd } from './analyze-repo.js';
 
 // Pull the version from the workspace package.json (Node's `with: { type: 'json' }`
@@ -307,6 +308,8 @@ export async function dispatch(subcommand: string, args: string[]): Promise<Subc
       return exportConfigCmd(args.slice(0));
     case 'compare':
       return compareCmd(args.slice(0));
+    case 'genome':
+      return genomeCmd(args.slice(0));
     case 'help':
     case undefined:
       return {
@@ -332,6 +335,7 @@ export async function dispatch(subcommand: string, args: string[]): Promise<Subc
           '  diag      — kernel-version skew check (ADR-027 diagnostic)',
           '  export-config — emit MCP + claims + permissions as a single JSON (iter 97)',
           '  compare       — diff two harnesses (manifest + per-file fingerprints); ADR-031 --bundle (iter 105)',
+          '  genome        — 7-section readiness scorecard for a local repo (iter 110)',
           '  help      — show this message',
           '',
           'Flags:',

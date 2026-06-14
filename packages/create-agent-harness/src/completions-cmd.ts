@@ -23,6 +23,8 @@ const SUBCOMMANDS = [
   'export-config',
   // iter 105 — diff two harness manifests + per-file fingerprints
   'compare',
+  // iter 110 — 7-section readiness scorecard for a local repo
+  'genome',
   'help',
 ] as const;
 
@@ -89,6 +91,7 @@ _harness() {
     'diag:kernel-version skew check (ADR-027 diagnostic)'
     'export-config:emit MCP servers + claims + permissions as a single JSON'
     'compare:diff two harnesses (manifest + per-file fingerprints, ADR-031 --bundle)'
+    'genome:7-section readiness scorecard for a local repo (--json/--bundle, iter 110)'
     'help:show help'
   )
 
