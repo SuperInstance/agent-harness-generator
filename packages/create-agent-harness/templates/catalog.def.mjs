@@ -396,6 +396,35 @@ export const CATALOG = [
     commands: [doctorCommand],
   },
 
+  // --- Education / tutoring (iter 80) --------------------------------------
+  {
+    id: 'vertical:education',
+    category: 'Knowledge',
+    name: 'Education / Tutoring',
+    domain: 'learning',
+    description: 'A tutoring pod — tutor, explainer, quiz-master, grader over a per-learner mastery memory.',
+    harnessDesc: 'Tutor → explain → quiz → grade with adaptive depth and a "say I do not know" floor',
+    quickStart: 'Tutor → explain → quiz → grade, over per-learner mastery memory with an abstain-not-hallucinate policy.',
+    tags: ['education', 'tutoring', 'learning', 'pedagogy', 'mastery-based'],
+    mcp: [{ key: 'mastery_log', sub: 'mastery' }, { key: 'curriculum', sub: 'curriculum' }],
+    allow: ['mcp__mastery_log__*', 'mcp__curriculum__*'],
+    deny: ['Bash(rm -rf*)', 'Bash(git push*)'],
+    agents: [
+      { id: 'tutor', name: 'Tutor', tier: 'sonnet', role: 'Picks the next concept to teach from the learner\'s mastery map.', systemPrompt: 'You are the tutor. Read the learner\'s mastery map from memory and pick the next concept whose prerequisites are mastered but the concept itself is not. State the goal in one sentence the learner can hold in their head. Never teach something whose prerequisite is unmastered — fix the prerequisite first. Adapt depth to the learner\'s grade level and stated style preferences in memory.' },
+      { id: 'explainer', name: 'Explainer', tier: 'sonnet', role: 'Explains the picked concept at the right depth.', systemPrompt: 'You explain the concept the tutor picked. Start from the analogy or example most likely to land given the learner\'s prior masteries. Build the new concept in three layers: the one-line intuition, the worked example, then the formal statement. Stop after each layer and ask if the learner is ready to go deeper — never dump all three at once. If you do not know, say so; do not invent supporting "facts".' },
+      { id: 'quiz-master', name: 'Quiz Master', tier: 'haiku', role: 'Generates calibrated quiz items.', systemPrompt: 'You generate quiz items targeted at the concept just taught. One concept per item; mix recall, application, and transfer in 1:2:1 ratio. Calibrate difficulty using the learner\'s previous miss rate in memory — too easy is noise, too hard is demoralising. Every item carries a hidden rubric the grader will use; never reveal the rubric to the learner.' },
+      { id: 'grader', name: 'Grader', tier: 'sonnet', role: 'Grades open-ended responses against the hidden rubric.', systemPrompt: 'You grade the learner\'s response against the rubric the quiz-master attached. Award partial credit for correct reasoning that misses the bottom line; deduct for the answer-by-pattern-match without the reasoning. Write to mastery memory: concept, item id, score, miss pattern, and the smallest re-explanation the explainer would give to close the gap. Be the encouraging-but-honest voice.' },
+    ],
+    skills: [
+      memorySkill,
+      { id: 'teach-next', name: 'teach-next', description: 'Run one teaching cycle: pick next concept → explain → quiz → grade → update mastery.', body: 'Run one complete teaching cycle.\n\n1. Tutor reads the mastery map and picks the next concept whose prereqs are mastered.\n2. Explainer teaches it in 3 layers, pausing for "ready to go deeper?" between layers.\n3. Quiz-master generates 3-5 calibrated items mixing recall/apply/transfer.\n4. Grader scores the responses against the hidden rubric and writes mastery memory.\n5. Surface the smallest re-explanation needed for any item the learner missed.\n\nAlways respect the abstain floor — never invent supporting facts to fill in for a concept the harness doesn\'t actually know.' },
+    ],
+    commands: [
+      doctorCommand,
+      { id: 'mastery-report', name: 'mastery-report', description: 'Summarise the learner\'s current mastery map and recommend the next session\'s focus.', body: 'Generate the mastery report.\n\n1. Read the full mastery map from memory.\n2. Group concepts as: mastered (>0.85), in-progress (0.5-0.85), shaky (<0.5), and locked (prereq not mastered).\n3. Recommend 1-3 concepts for the next session, with the rationale ("X is in-progress and unlocks 4 downstream concepts").\n4. Flag any concepts where the miss-pattern suggests a deeper conceptual gap rather than rehearsal noise.\n\nWrite the report; do not start teaching in this command.' },
+    ],
+  },
+
   // --- Exotic / self-evolving ---------------------------------------------
   {
     id: 'vertical:exotic',

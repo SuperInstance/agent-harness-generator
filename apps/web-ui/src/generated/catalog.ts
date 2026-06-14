@@ -433,6 +433,37 @@ export const GEN_TEMPLATES: GeneratedTemplate[] = [
     ]
   },
   {
+    "id": "vertical:education",
+    "category": "Knowledge",
+    "name": "Education / Tutoring",
+    "domain": "learning",
+    "description": "A tutoring pod — tutor, explainer, quiz-master, grader over a per-learner mastery memory.",
+    "harnessDesc": "Tutor → explain → quiz → grade with adaptive depth and a \"say I do not know\" floor",
+    "quickStart": "Tutor → explain → quiz → grade, over per-learner mastery memory with an abstain-not-hallucinate policy.",
+    "tags": [
+      "education",
+      "tutoring",
+      "learning",
+      "pedagogy",
+      "mastery-based"
+    ],
+    "generate": true,
+    "defaultAgents": [
+      "tutor",
+      "explainer",
+      "quiz-master",
+      "grader"
+    ],
+    "defaultSkills": [
+      "memory-inspect",
+      "teach-next"
+    ],
+    "defaultCommands": [
+      "doctor",
+      "mastery-report"
+    ]
+  },
+  {
     "id": "vertical:exotic",
     "category": "Frontier",
     "name": "Exotic / Self-Evolving",
@@ -888,6 +919,42 @@ export const GEN_AGENTS: CatalogItem[] = [
     ]
   },
   {
+    "id": "tutor",
+    "name": "Tutor",
+    "description": "Picks the next concept to teach from the learner's mastery map.",
+    "body": "You are the tutor. Read the learner's mastery map from memory and pick the next concept whose prerequisites are mastered but the concept itself is not. State the goal in one sentence the learner can hold in their head. Never teach something whose prerequisite is unmastered — fix the prerequisite first. Adapt depth to the learner's grade level and stated style preferences in memory.",
+    "tags": [
+      "education"
+    ]
+  },
+  {
+    "id": "explainer",
+    "name": "Explainer",
+    "description": "Explains the picked concept at the right depth.",
+    "body": "You explain the concept the tutor picked. Start from the analogy or example most likely to land given the learner's prior masteries. Build the new concept in three layers: the one-line intuition, the worked example, then the formal statement. Stop after each layer and ask if the learner is ready to go deeper — never dump all three at once. If you do not know, say so; do not invent supporting \"facts\".",
+    "tags": [
+      "education"
+    ]
+  },
+  {
+    "id": "quiz-master",
+    "name": "Quiz Master",
+    "description": "Generates calibrated quiz items.",
+    "body": "You generate quiz items targeted at the concept just taught. One concept per item; mix recall, application, and transfer in 1:2:1 ratio. Calibrate difficulty using the learner's previous miss rate in memory — too easy is noise, too hard is demoralising. Every item carries a hidden rubric the grader will use; never reveal the rubric to the learner.",
+    "tags": [
+      "education"
+    ]
+  },
+  {
+    "id": "grader",
+    "name": "Grader",
+    "description": "Grades open-ended responses against the hidden rubric.",
+    "body": "You grade the learner's response against the rubric the quiz-master attached. Award partial credit for correct reasoning that misses the bottom line; deduct for the answer-by-pattern-match without the reasoning. Write to mastery memory: concept, item id, score, miss pattern, and the smallest re-explanation the explainer would give to close the gap. Be the encouraging-but-honest voice.",
+    "tags": [
+      "education"
+    ]
+  },
+  {
     "id": "hypothesizer",
     "name": "Hypothesizer",
     "description": "Proposes a falsifiable self-improvement.",
@@ -972,6 +1039,12 @@ export const GEN_SKILLS: CatalogItem[] = [
     "body": "Run a wellness intake.\n\n1. Intake collects goals, volunteered history, and routine.\n2. On any red-flag symptom, STOP and direct to emergency/professional care.\n3. Triage routes to the right resource (clinician / dietitian / mental-health / info).\n4. Care-coordinator organises logistics and questions for a real clinician.\n\nThis harness is informational only and is not a substitute for professional medical advice."
   },
   {
+    "id": "teach-next",
+    "name": "teach-next",
+    "description": "Run one teaching cycle: pick next concept → explain → quiz → grade → update mastery.",
+    "body": "Run one complete teaching cycle.\n\n1. Tutor reads the mastery map and picks the next concept whose prereqs are mastered.\n2. Explainer teaches it in 3 layers, pausing for \"ready to go deeper?\" between layers.\n3. Quiz-master generates 3-5 calibrated items mixing recall/apply/transfer.\n4. Grader scores the responses against the hidden rubric and writes mastery memory.\n5. Surface the smallest re-explanation needed for any item the learner missed.\n\nAlways respect the abstain floor — never invent supporting facts to fill in for a concept the harness doesn't actually know."
+  },
+  {
     "id": "evolve",
     "name": "evolve",
     "description": "Run one safe self-improvement cycle: hypothesize → experiment → record → (maybe) federate.",
@@ -991,5 +1064,11 @@ export const GEN_COMMANDS: CatalogItem[] = [
     "name": "review-diff",
     "description": "Review the current working diff for correctness, security, and reuse.",
     "body": "Review the current git diff.\n\n1. `git diff` to read the change.\n2. Report only high-confidence findings as `file:line — issue — fix`.\n3. Separate bugs from nits.\n4. End with APPROVE or REQUEST-CHANGES and a one-line reason."
+  },
+  {
+    "id": "mastery-report",
+    "name": "mastery-report",
+    "description": "Summarise the learner's current mastery map and recommend the next session's focus.",
+    "body": "Generate the mastery report.\n\n1. Read the full mastery map from memory.\n2. Group concepts as: mastered (>0.85), in-progress (0.5-0.85), shaky (<0.5), and locked (prereq not mastered).\n3. Recommend 1-3 concepts for the next session, with the rationale (\"X is in-progress and unlocks 4 downstream concepts\").\n4. Flag any concepts where the miss-pattern suggests a deeper conceptual gap rather than rehearsal noise.\n\nWrite the report; do not start teaching in this command."
   }
 ];

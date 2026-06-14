@@ -4,6 +4,58 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 80 (MILESTONE) (2026-06-14)
+
+- **`vertical:education` — 17th vertical template**. Real new product
+  surface for the first time since iter 6's vertical:research (60+ iters
+  ago). The recent iter run has been infrastructure (CI, security,
+  diag, ADR); iter 80 is the milestone iter that ships a usable
+  vertical-specific harness end-users can scaffold today:
+  ```
+  npx create-agent-harness my-tutor --template vertical:education --host claude-code
+  ```
+- **Four bespoke agents** with grade-aware system prompts:
+  - **Tutor** (sonnet) — reads the learner's mastery map, picks the
+    next concept whose prereqs are mastered, refuses to teach a
+    concept on an unmastered foundation
+  - **Explainer** (sonnet) — 3-layer teaching (intuition → worked
+    example → formal statement) with "ready to go deeper?" gates
+    between layers, says "I do not know" instead of inventing facts
+  - **Quiz Master** (haiku) — calibrated quiz items (recall : apply :
+    transfer = 1:2:1), hidden rubrics, difficulty calibrated against
+    the learner's previous miss rate in memory
+  - **Grader** (sonnet) — partial credit for correct reasoning,
+    writes mastery memory (concept, item id, score, miss pattern,
+    smallest re-explanation needed), encouraging-but-honest voice
+- **Two commands**:
+  - **`teach-next`** — one teaching cycle (pick → explain → quiz →
+    grade → update mastery)
+  - **`mastery-report`** — summarises the mastery map (mastered /
+    in-progress / shaky / locked), recommends next session's focus
+- **MCP namespaces**: `mastery_log` + `curriculum` (default-deny
+  everything else; `Bash(rm -rf*)` and `Bash(git push*)` denied
+  explicitly)
+- **Pedagogy invariants surfaced as policy** — the abstain-not-
+  hallucinate floor, the "never teach on unmastered prereq" rule,
+  the hidden rubric (never revealed to learner) — these are in the
+  system prompts so they survive any future kernel update.
+- **`TEMPLATES` const** in `index.ts` updated 16 → 17 entries.
+- **`catalog.json`** regenerated via `gen-templates.mjs` (17 entries).
+- **Generated scaffold** produces 4 agent files + 2 command files +
+  memory skill + manifest. End-to-end scaffold smoke-tested locally:
+  ```
+  Scaffolded vertical:education to /tmp/ahg-edu-mtqPXq
+  .claude/commands/{doctor.md, mastery-report.md}
+  .claude/skills/memory-inspect/SKILL.md
+  .claude/skills/teach-next/SKILL.md
+  src/agents/{tutor.ts, explainer.ts, quiz-master.ts, grader.ts}
+  ```
+- **Tests** — `packages/create-agent-harness/__tests__/generated-templates.test.ts`
+  16 → 17 expected count + new pin for `vertical:education` in the
+  round-trip output.
+- TS suite: **568/568** (count unchanged; the existing 2 tests were
+  updated in-place rather than added).
+
 ### Added — Iter 79 (2026-06-14)
 
 - **ADR-028 — Skew Detection and Liveness — One Probe, Many Surfaces**.

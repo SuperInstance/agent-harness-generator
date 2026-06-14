@@ -897,6 +897,82 @@
       ]
     },
     {
+      "id": "vertical:education",
+      "dir": "vertical_education",
+      "category": "Knowledge",
+      "name": "Education / Tutoring",
+      "domain": "learning",
+      "description": "A tutoring pod — tutor, explainer, quiz-master, grader over a per-learner mastery memory.",
+      "harnessDesc": "Tutor → explain → quiz → grade with adaptive depth and a \"say I do not know\" floor",
+      "quickStart": "Tutor → explain → quiz → grade, over per-learner mastery memory with an abstain-not-hallucinate policy.",
+      "tags": [
+        "education",
+        "tutoring",
+        "learning",
+        "pedagogy",
+        "mastery-based"
+      ],
+      "generate": true,
+      "mcpServers": [
+        "{{name}}",
+        "mastery_log",
+        "curriculum"
+      ],
+      "agentCount": 4,
+      "skillCount": 2,
+      "commandCount": 2,
+      "agents": [
+        {
+          "id": "tutor",
+          "name": "Tutor",
+          "tier": "sonnet",
+          "role": "Picks the next concept to teach from the learner's mastery map."
+        },
+        {
+          "id": "explainer",
+          "name": "Explainer",
+          "tier": "sonnet",
+          "role": "Explains the picked concept at the right depth."
+        },
+        {
+          "id": "quiz-master",
+          "name": "Quiz Master",
+          "tier": "haiku",
+          "role": "Generates calibrated quiz items."
+        },
+        {
+          "id": "grader",
+          "name": "Grader",
+          "tier": "sonnet",
+          "role": "Grades open-ended responses against the hidden rubric."
+        }
+      ],
+      "skills": [
+        {
+          "id": "memory-inspect",
+          "name": "memory-inspect",
+          "description": "Search and inspect the harness memory namespace (HNSW + emergent-time decay)."
+        },
+        {
+          "id": "teach-next",
+          "name": "teach-next",
+          "description": "Run one teaching cycle: pick next concept → explain → quiz → grade → update mastery."
+        }
+      ],
+      "commands": [
+        {
+          "id": "doctor",
+          "name": "doctor",
+          "description": "Health-check the harness: kernel load, MCP wiring, memory backend, host adapter."
+        },
+        {
+          "id": "mastery-report",
+          "name": "mastery-report",
+          "description": "Summarise the learner's current mastery map and recommend the next session's focus."
+        }
+      ]
+    },
+    {
       "id": "vertical:exotic",
       "dir": "vertical_exotic",
       "category": "Frontier",
