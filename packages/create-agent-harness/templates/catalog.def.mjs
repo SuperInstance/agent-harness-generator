@@ -483,6 +483,36 @@ export const CATALOG = [
     ],
   },
 
+  // --- Repo Maintainer (iter 113 — best viral demo from user roadmap) -----
+  {
+    id: 'vertical:repo-maintainer',
+    category: 'Engineering',
+    name: 'Repo Maintainer',
+    domain: 'engineering/repo-maintenance',
+    description: 'A maintenance pod for an existing repo — maintainer, benchmarker, release, security agents. The "this repo ships with its own agent" demo.',
+    harnessDesc: 'Maintain an existing repo: triage what changed, benchmark, release-check, security-flag',
+    quickStart: 'Maintainer triages the diff → benchmarker reports regressions → release drafts the GH release body → security flags risky MCP grants. Drop into any repo and run.',
+    tags: ['repo-maintainer', 'engineering', 'release', 'security', 'benchmark', 'viral'],
+    mcp: [{ key: 'code_index', sub: 'index' }],
+    allow: ['Bash(npm test*)', 'Bash(npm run*)', 'Bash(git diff*)', 'Bash(git status*)', 'Bash(git log*)', 'Bash(git show*)', 'Bash(cargo bench*)', 'Bash(cargo test*)'],
+    deny: ['Bash(git push*)', 'Bash(rm -rf*)', 'Bash(npm publish*)'],
+    agents: [
+      { id: 'maintainer', name: 'Maintainer', tier: 'opus', role: 'Triages the repo state — what changed, what is risky, what to review first.', systemPrompt: 'You are the repo maintainer. When asked "what changed?" you read git diff / git log / git status and produce a one-screen triage: the headline risk, the files most likely to regress, and the smallest test the team should run before merging. You never push, never publish, never auto-fix — your job is to surface, not to act. When uncertain you say "I can\'t tell from the diff alone" and ask for the specific file or commit you need.' },
+      { id: 'benchmarker', name: 'Benchmarker', tier: 'sonnet', role: 'Runs the perf gates and reports regressions.', systemPrompt: 'You run the project\'s declared benchmark suite (cargo bench, npm run bench, or whatever the manifest names) and compare against the baseline. Report regressions only when they cross the project\'s declared threshold — noise is worse than no result. Distinguish a real regression (statistically significant + reproducible) from a single-run flake. Write the result to memory so the maintainer can quote it.' },
+      { id: 'release', name: 'Release', tier: 'opus', role: 'Drafts the GitHub release body + runs the readiness gates.', systemPrompt: 'You draft a release. Read the conventional-commit log since the last tag, group commits by feat/fix/docs/chore, and write a release body that an outside reader could understand without the repo open. Before drafting you confirm the release-readiness gates have passed (validate / sbom / witness / score). If any gate is red you refuse to draft and name the specific blocker. The release is a public commitment; you treat it like one.' },
+      { id: 'security', name: 'Security', tier: 'opus', role: 'Flags risky MCP grants, leaked secrets, dangerous diffs.', systemPrompt: 'You scan the harness for the security regressions that matter: MCP grants that widened (Bash(rm:*), shell on, network on, file-write on), .env or token strings that escaped the redaction set, dependency updates that pulled in CVEs, and policy files that drifted from default-deny. Report each finding with a file:line, a severity (HIGH / MEDIUM), and the smallest fix. Never approve a change that widens a permission without a written reason in the PR description.' },
+    ],
+    skills: [
+      memorySkill,
+      { id: 'plan-change', name: 'plan-change', description: 'Turn a feature request into a minimal, file-level implementation plan before any code.', body: 'Produce an implementation plan for a requested change.\n\n1. Restate the goal in one sentence.\n2. List the files to touch and why.\n3. Name the smallest interface that satisfies it.\n4. Flag anything that ripples beyond three files or widens a permission.\n\nHand the plan to the implementer; do not write code in this step.' },
+    ],
+    commands: [
+      doctorCommand,
+      { id: 'repo-triage', name: 'repo-triage', description: 'Maintainer triage: what changed, what is risky, what to review first.', body: 'Triage the current repo state.\n\n1. `git status` to see what is uncommitted.\n2. `git log --oneline -20` to see the recent history.\n3. `git diff HEAD~1` for the latest commit.\n4. Report:\n   - headline risk\n   - files most likely to regress\n   - smallest test the team should run before merging\n   - any permissions widened in the diff\n\nDo not auto-fix; surface findings only.' },
+      { id: 'release-check', name: 'release-check', description: 'Run the release-readiness umbrella + draft a tweet-length announcement.', body: 'Run the release-readiness check.\n\n1. `harness validate` — umbrella check, must be green.\n2. `harness sbom` — emit the SBOM artifact.\n3. `harness score` — the scorecard must be >= 70 (B grade).\n4. If any gate is red, REFUSE to draft and name the specific blocker.\n5. Otherwise: draft the GitHub release body from the conventional-commit log since the last tag, grouped by feat/fix/docs/chore.\n\nNever push or tag in this command; the operator decides when to ship.' },
+    ],
+  },
+
   // --- Exotic / self-evolving ---------------------------------------------
   {
     id: 'vertical:exotic',

@@ -1125,6 +1125,87 @@
       ]
     },
     {
+      "id": "vertical:repo-maintainer",
+      "dir": "vertical_repo-maintainer",
+      "category": "Engineering",
+      "name": "Repo Maintainer",
+      "domain": "engineering/repo-maintenance",
+      "description": "A maintenance pod for an existing repo — maintainer, benchmarker, release, security agents. The \"this repo ships with its own agent\" demo.",
+      "harnessDesc": "Maintain an existing repo: triage what changed, benchmark, release-check, security-flag",
+      "quickStart": "Maintainer triages the diff → benchmarker reports regressions → release drafts the GH release body → security flags risky MCP grants. Drop into any repo and run.",
+      "tags": [
+        "repo-maintainer",
+        "engineering",
+        "release",
+        "security",
+        "benchmark",
+        "viral"
+      ],
+      "generate": true,
+      "mcpServers": [
+        "{{name}}",
+        "code_index"
+      ],
+      "agentCount": 4,
+      "skillCount": 2,
+      "commandCount": 3,
+      "agents": [
+        {
+          "id": "maintainer",
+          "name": "Maintainer",
+          "tier": "opus",
+          "role": "Triages the repo state — what changed, what is risky, what to review first."
+        },
+        {
+          "id": "benchmarker",
+          "name": "Benchmarker",
+          "tier": "sonnet",
+          "role": "Runs the perf gates and reports regressions."
+        },
+        {
+          "id": "release",
+          "name": "Release",
+          "tier": "opus",
+          "role": "Drafts the GitHub release body + runs the readiness gates."
+        },
+        {
+          "id": "security",
+          "name": "Security",
+          "tier": "opus",
+          "role": "Flags risky MCP grants, leaked secrets, dangerous diffs."
+        }
+      ],
+      "skills": [
+        {
+          "id": "memory-inspect",
+          "name": "memory-inspect",
+          "description": "Search and inspect the harness memory namespace (HNSW + emergent-time decay)."
+        },
+        {
+          "id": "plan-change",
+          "name": "plan-change",
+          "description": "Turn a feature request into a minimal, file-level implementation plan before any code."
+        }
+      ],
+      "commands": [
+        {
+          "id": "doctor",
+          "name": "doctor",
+          "description": "Health-check the harness: kernel load, MCP wiring, memory backend, host adapter."
+        },
+        {
+          "id": "repo-triage",
+          "name": "repo-triage",
+          "description": "Maintainer triage: what changed, what is risky, what to review first."
+        },
+        {
+          "id": "release-check",
+          "name": "release-check",
+          "description": "Run the release-readiness umbrella + draft a tweet-length announcement."
+        }
+      ]
+    },
+    {
       "id": "vertical:exotic",
       "dir": "vertical_exotic",
       "category": "Frontier",

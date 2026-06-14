@@ -73,6 +73,7 @@ export const TEMPLATES = [
   'vertical:education',  // iter 80 (milestone)
   'vertical:sales',      // iter 87
   'vertical:gaming',     // iter 96
+  'vertical:repo-maintainer',  // iter 113 — best viral demo (user roadmap)
   'vertical:exotic',
 ] as const;
 export type TemplateId = (typeof TEMPLATES)[number];

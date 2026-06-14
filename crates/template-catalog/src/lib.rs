@@ -108,11 +108,11 @@ mod tests {
     fn embedded_json_parses() {
         let c = Catalog::load().expect("catalog.json parses");
         assert_eq!(c.schema, 1);
-        // iter 96 bumped to 19 with vertical:gaming. iter-86's
-        // healthcheck catalogCount cross-check enforces 3-way sync
-        // (catalog.json + TS test + this assertion) pre-push, so the
-        // iter-83 drift mode can't recur.
-        assert_eq!(c.templates.len(), 19, "expected 19 templates");
+        // iter 113 bumped to 20 with vertical:repo-maintainer (best viral
+        // demo per the user's roadmap). iter-86's healthcheck catalogCount
+        // cross-check enforces 3-way sync (catalog.json + TS test + this
+        // assertion) pre-push, so the iter-83 drift mode can't recur.
+        assert_eq!(c.templates.len(), 20, "expected 20 templates");
     }
 
     #[test]
