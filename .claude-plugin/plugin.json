@@ -42,7 +42,8 @@
     "harness-secrets",
     "verify-witness",
     "upgrade-harness",
-    "diag-harness"
+    "diag-harness",
+    "compare-harnesses"
   ],
   "commands": [
     {
@@ -72,6 +73,10 @@
     {
       "name": "diag-harness",
       "description": "Kernel-version skew check (ADR-027). Surfaces manifest kernel + installed kernel + verdict with copy-pasteable next step. --json for CI gating; --bundle (iter 90) emits a full support-ticket JSON (sanitised manifest + deps + env)."
+    },
+    {
+      "name": "compare-harnesses",
+      "description": "Diff two scaffolded harnesses: manifest meta + host list + per-file SHA-256 fingerprints. Exit 0 IDENTICAL, 1 DRIFT, 2 missing manifest. --bundle emits ADR-031 schema-1 JSON for CI."
     }
   ],
   "permissions": ["memory", "filesystem", "network"],
