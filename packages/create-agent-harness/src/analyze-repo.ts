@@ -217,7 +217,14 @@ function describeRisk(p: PolicyProfile): string {
 }
 
 function kebab(s: string): string {
-  return s.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').replace(/-{2,}/g, '-');
+  // CodeQL #1/#3 (polynomial regex on uncontrolled data): the previous
+  // chain used `/^-+|-+$/g` and `/-{2,}/g`, both of which CodeQL flags as
+  // super-linear on adversarial input (e.g. a name that is thousands of
+  // separators). After the first pass collapses every non-alnum RUN to a
+  // single '-', the string can only contain single dashes — so trimming a
+  // single leading/trailing dash with `/^-|-$/g` is sufficient AND linear.
+  // The `-{2,}` collapse is now provably unreachable and removed.
+  return s.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
 export function recommendPlan(profile: RepoProfile, semantic?: Record<string, number>): HarnessPlan {

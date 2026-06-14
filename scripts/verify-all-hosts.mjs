@@ -104,7 +104,10 @@ for (const host of HOSTS) {
           host,
           status: ok && pluginOk ? 'PASS' : 'FAIL',
           tool: c.tool,
-          proof: content.slice(0, 60).replace(/\n/g, '\n') + pluginProof,
+          // CodeQL #6: was `.replace(/\n/g, '\n')` — a no-op (replacing a
+          // newline with itself). The intent is to flatten the multi-line
+          // config excerpt onto one row; replace newlines with a space.
+          proof: content.slice(0, 60).replace(/\n/g, ' ') + pluginProof,
         });
       }
     }

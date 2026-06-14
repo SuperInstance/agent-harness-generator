@@ -175,7 +175,11 @@ export function parseArgs(argv: string[]): CliArgs {
  * templates/vertical_devops).
  */
 export function templateDir(id: string): string {
-  return join(TEMPLATES_ROOT, id.replace(':', '_'));
+  // CodeQL #2 (incomplete string escaping): use a global replace so EVERY
+  // ':' is encoded, not just the first. Template ids only carry one colon
+  // today (vertical:devops), but a single-occurrence replace is a latent
+  // path-mapping bug if an id ever carries two.
+  return join(TEMPLATES_ROOT, id.replace(/:/g, '_'));
 }
 
 export interface ScaffoldOptions {
@@ -302,13 +306,26 @@ async function runMetaHarnessSubcommand(sub: string, rest: string[]): Promise<nu
         console.error('Usage: npx metaharness from-repo <repo-url> <harness-name> [--template <id>] [--host <id>]');
         return 2;
       }
+      // CodeQL #4 (second-order command injection): `url` is user-controlled.
+      // Even with spawnSync's array form (no shell), git interprets a leading
+      // '-' as an OPTION — e.g. `--upload-pack=...` or `-c core.fsmonitor=...`
+      // would run arbitrary commands during clone. Two defenses:
+      //   1. Allowlist the URL scheme to https/http/ssh/git before cloning.
+      //   2. Pass `--` so everything after is treated as a positional, never
+      //      an option, regardless of how it starts.
+      if (!/^(https?:\/\/|git:\/\/|ssh:\/\/|git@)/.test(url)) {
+        console.error(
+          `Refusing to clone "${url}": only https://, http://, git://, ssh://, or git@ URLs are allowed.`,
+        );
+        return 2;
+      }
       const { spawnSync } = await import('node:child_process');
       const { mkdtempSync } = await import('node:fs');
       const { tmpdir } = await import('node:os');
       const { join: pathJoin } = await import('node:path');
       const tmp = mkdtempSync(pathJoin(tmpdir(), 'metaharness-fromrepo-'));
       console.log(`Cloning ${url} → ${tmp} (depth=1, code never executed)`);
-      const clone = spawnSync('git', ['clone', '--depth=1', '--quiet', url, tmp], { stdio: 'inherit' });
+      const clone = spawnSync('git', ['clone', '--depth=1', '--quiet', '--', url, tmp], { stdio: 'inherit' });
       if (clone.status !== 0) {
         console.error(`git clone failed (exit ${clone.status}). Is the URL public, is git installed?`);
         return 2;
