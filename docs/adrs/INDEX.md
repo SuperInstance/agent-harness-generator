@@ -4,7 +4,7 @@
 
 ## How to read this set
 
-Each ADR is independently reviewable. None of them ships code; the whole series is documentation that the repo `ruvnet/agent-harness-generator` will eventually be built against. The naming convention is `ADR-NNN-kebab-case-slug.md` with three-digit padding.
+Each ADR is independently reviewable. The early series (ADR-001…019) is design documentation the repo is built against; the later, `Accepted` ADRs (e.g. ADR-019 release orchestration, ADR-020/021 the web UI) document decisions whose code has already landed. The naming convention is `ADR-NNN-kebab-case-slug.md` with three-digit padding.
 
 Every ADR follows the same shape:
 
@@ -53,6 +53,8 @@ ADR-006 (memory + learning) and ADR-008 (drift detection) cut across all phases.
 | [ADR-016](./ADR-016-migration-for-ruflo-users.md) | Migration for existing ruflo users | Proposed | Moving from ruflo to a generated harness without losing memory / patterns / skills. |
 | [ADR-018](./ADR-018-rvm-as-deployment-target.md) | RVM as deployment target | Accepted | Use the RVM microhypervisor as the hardware-isolation tier for federation + multi-tenant deployments. |
 | [ADR-019](./ADR-019-release-orchestration.md) | Release orchestration | Accepted | `scripts/release.mjs` composes version-bump + preflight + marketplace + dry-run + tag into one command; refuses dirty tree; per-step PASS/SKIP/FAIL gating. |
+| [ADR-020](./ADR-020-web-generator-ui.md) | Web generator UI | Accepted | `apps/web-ui` — client-only React/Vite generator. Composes harnesses + Claude skills/agents/commands, live preview, zip download. Renderer ported behaviour-for-behaviour from the CLI; parity test pins it. |
+| [ADR-021](./ADR-021-client-side-packaging-and-pages-deploy.md) | Client-side packaging + Pages deploy | Accepted | JSZip + Blob in-browser packaging (deterministic dates); `VITE_BASE` env-driven base path; gated GitHub Pages workflow (unit + e2e before deploy); UI isolated from the kernel workspace. |
 
 ## Conventions used across the series
 

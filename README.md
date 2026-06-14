@@ -33,6 +33,35 @@ Like ruflo is the meta-harness for Claude, this is the meta-harness for AI agent
 
 ---
 
+## Web UI — generate in your browser, no install
+
+There's a **100% client-side** generator UI (like ruflo's [goal UI](https://goal.ruv.io), for the meta-harness). Compose a harness or author Claude skills/agents/commands, watch the live file tree, and download a zip — nothing leaves your browser. Desktop- and mobile-friendly, deployable to GitHub Pages.
+
+[![Open the Web UI](https://img.shields.io/badge/Web_UI-open_generator-7c5cff?style=for-the-badge)](https://ruvnet.github.io/agent-harness-generator/) &nbsp; [![ADR-020](https://img.shields.io/badge/design-ADR--020%20%2B%20ADR--021-8b5cf6?style=for-the-badge)](docs/adrs/ADR-020-web-generator-ui.md)
+
+[![Agent Harness Generator web UI](docs/web-ui/screenshot-desktop.png)](https://ruvnet.github.io/agent-harness-generator/)
+
+<p align="center">
+  <img src="docs/web-ui/screenshot-artifact.png" width="46%" alt="Author a Claude skill / agent / command" />
+  &nbsp;
+  <img src="docs/web-ui/screenshot-mobile.png" width="22%" alt="Mobile-friendly" />
+</p>
+
+- **Full-harness mode** — name, host(s), template, kernel options, and a composable pick-list of agents/skills/commands → a `<name>.zip` scaffold that's byte-compatible with `create-agent-harness`.
+- **Skill / Agent / Command mode** — author or pick a single artifact and download a `SKILL.md` folder (YAML frontmatter) you can drop straight into **Claude desktop** or **claude.ai**.
+
+```bash
+cd apps/web-ui
+npm install
+npm run dev      # local dev server
+npm test         # 27 generator unit tests
+npm run e2e      # Playwright desktop + mobile, asserts zero console errors
+```
+
+Source + rationale: [`apps/web-ui/`](apps/web-ui/) · [ADR-020](docs/adrs/ADR-020-web-generator-ui.md) · [ADR-021](docs/adrs/ADR-021-client-side-packaging-and-pages-deploy.md).
+
+---
+
 ## Quick try
 
 ```bash
