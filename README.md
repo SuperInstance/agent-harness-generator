@@ -11,6 +11,7 @@
 [![Open the Studio](https://img.shields.io/badge/Studio-open_in_browser_↗-7c5cff?style=for-the-badge&logo=githubpages&logoColor=white)](https://ruvnet.github.io/agent-harness-generator/)
 [![User guide](https://img.shields.io/badge/User_guide-plain_language-22c55e?style=for-the-badge)](docs/USERGUIDE.md)
 [![Tests — 568 passing](https://img.shields.io/badge/tests-568%20passing-22c55e?style=for-the-badge)](docs/ARCHITECTURE.md)
+[![npm publish smoke](https://github.com/ruvnet/agent-harness-generator/actions/workflows/published-smoke.yml/badge.svg)](https://github.com/ruvnet/agent-harness-generator/actions/workflows/published-smoke.yml)
 [![License MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
 [![Agent Harness Studio](docs/web-ui/screenshot-desktop.png)](https://ruvnet.github.io/agent-harness-generator/)
