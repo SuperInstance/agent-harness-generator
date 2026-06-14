@@ -43,7 +43,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@ruvnet/metaharness": "0.1.0"
+    "metaharness": "0.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

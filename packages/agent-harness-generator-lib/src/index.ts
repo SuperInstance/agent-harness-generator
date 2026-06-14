@@ -41,7 +41,7 @@ export {
   sha256,
   fingerprintFiles,
   diffFingerprints,
-} from '@ruvnet/metaharness';
+} from 'metaharness';
 
 export type {
   Host,
@@ -51,4 +51,4 @@ export type {
   ScaffoldOptions,
   ScaffoldResult,
   TemplateVars,
-} from '@ruvnet/metaharness';
+} from 'metaharness';
