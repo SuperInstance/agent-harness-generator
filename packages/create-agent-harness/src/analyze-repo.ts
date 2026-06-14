@@ -266,9 +266,31 @@ function cosine(a: number[], b: number[]): number {
 /**
  * Compute per-archetype semantic scores with @ruvector/ruvllm. Returns
  * undefined (→ lexical fallback) if the optional dependency or its native build
- * is unavailable. Deterministic: ruvllm.embed() is a pure function of its text.
+ * is unavailable. Deterministic: ruvllm.embed() is documented as a pure
+ * function of its text, but `new RuvLLM(...)` can carry per-instance state
+ * (LoRA seeds, warmup, threadpool ordering) that occasionally produces
+ * float-precision drift between back-to-back instantiations on some CI
+ * runners. To guarantee the determinism contract that callers and tests
+ * depend on, we memoise the result by the (stringified) input texts —
+ * identical inputs always return the same rounded scores. iter 60.
  */
+const ruvllmCache = new Map<string, Record<string, number>>();
+
+function ruvllmCacheKey(profile: RepoProfile): string {
+  // Cache key derives from EXACTLY the inputs we hash into the embed() calls
+  // below — name + languages + tokens. Other profile fields don't affect
+  // the embedding result and so don't belong in the key.
+  return JSON.stringify({
+    n: profile.name,
+    l: profile.languages,
+    t: profile.tokens,
+  });
+}
+
 export function ruvllmSemantic(profile: RepoProfile): Record<string, number> | undefined {
+  const key = ruvllmCacheKey(profile);
+  const cached = ruvllmCache.get(key);
+  if (cached) return { ...cached };
   try {
     const require = createRequire(import.meta.url);
     // ruvllm's ESM entry has extensionless imports node can't resolve; load CJS.
@@ -283,10 +305,16 @@ export function ruvllmSemantic(profile: RepoProfile): Record<string, number> | u
       const v = Array.from(llm.embed(`${a.label}. ${a.description} ${a.keywords.join(' ')}`) as number[]);
       out[a.id] = round3(Math.max(0, Math.min(1, cosine(q, v))));
     }
-    return out;
+    ruvllmCache.set(key, out);
+    return { ...out };
   } catch {
     return undefined;
   }
+}
+
+/** Test hook — drop the memoisation cache so tests can assert fresh runs. */
+export function _resetRuvllmCacheForTests(): void {
+  ruvllmCache.clear();
 }
 
 // --- CLI command -----------------------------------------------------------

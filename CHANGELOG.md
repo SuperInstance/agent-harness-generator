@@ -4,6 +4,24 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Fixed — Iter 60 (2026-06-14)
+
+- **`ruvllmSemantic()` now memoised by input** — closes a pre-existing
+  determinism bug in PR #1's `analyze-repo.test.ts > ruvllm embeddings
+  (opt-in, deterministic, fallback-safe) > returns a per-archetype
+  map`. The test asserts `ruvllmSemantic(profile) === ruvllmSemantic(profile)`,
+  but `new RuvLLM(...)` instantiates fresh per-instance state on every
+  call (LoRA seeds, threadpool ordering) so back-to-back invocations
+  can produce float-precision drift on some CI runners — repro'd on
+  Node 22 / ubuntu-latest after the PR #1 merge.
+  Fix: a Map-based memo cache keyed on the EXACT inputs used in the
+  `embed()` calls (`name`, `languages`, `tokens`). Identical inputs
+  → identical rounded scores, forever. Cache reads are deep-cloned so
+  callers cannot mutate cached entries. `_resetRuvllmCacheForTests()`
+  exported for fresh-run tests.
+- This was the only failing case on c42dfcc's CI; iter 60 should land
+  CI green on main for the first time since the PR #1 merge red.
+
 ### Added — Iter 59 (2026-06-14)
 
 - **`packages/bench/host-baseline.json` committed** — closes the
