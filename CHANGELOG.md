@@ -4,6 +4,36 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 104 (2026-06-14)
+
+- **ADR-031 — The Bundle JSON Pattern**. ADR-030 alternative D
+  explicitly said "wait until N=3+ before extracting a shared bundle
+  pattern." With iter-90 diag, iter-97 export-config, and iter-102
+  audit all shipped, N=3 is reached.
+- **6 rules documented**:
+  1. Every bundle uses a schema-1 envelope: `{ schema: 1,
+     generatedAt: <ISO>, …subcommand-specific…, exitCode: <0|1|2> }`
+  2. Sanitisation is mandatory for user-typed fields; the iter-97
+     regex `/(secret|token|key|password|passphrase)/i` is canonical
+  3. Errors are bundle-formed too — `{ schema: 1, error:
+     "no-manifest", … }` on bad input; never a human-text fallback
+  4. Exit code follows the verdict (CI gates on `$?` keep working)
+  5. Adding `--bundle` to a subcommand does NOT change text mode
+  6. NO shared `bundle.ts` helper at N=3 — revisit at N=4
+- **5 alternatives explicitly rejected** with rationale:
+  - Skip the ADR (cost of future re-derivation too high)
+  - Build the shared helper now (premature; shape may still evolve)
+  - Drop `exitCode` from JSON body (consumers reading paste-from-mail
+    would lose the verdict signal)
+  - `data` wrapper (forces every consumer through one more indirection)
+  - Configurable sanitisation regex (the iter 90 → 97 tuning was real
+    engineering; standardise on the result, don't re-iterate)
+- **6 required tests** referenced — all exist + pass.
+- The Discovery Loop ADR (030) covers "how to ship a tool"; the
+  Bundle Pattern ADR (031) covers "what shape that tool's snapshot
+  output takes." Two architecture decisions, one per axis.
+- `docs/adrs/INDEX.md` updated. `adr-index.test.ts` 3/3 still passes.
+
 ### Changed — Iter 103 (2026-06-14)
 
 - **iter-102's `audit --bundle` propagated across user-facing docs**
