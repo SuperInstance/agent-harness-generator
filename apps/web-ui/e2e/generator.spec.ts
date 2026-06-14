@@ -1,13 +1,25 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Agent Harness Generator UI', () => {
+// iter 120 — the OnboardingModal (iter 106 + iter 117 Getting Started enhancement)
+// shows on first visit and overlays the page, blocking Playwright interactions on
+// elements behind it. Pre-set the dismissed flag in localStorage on every test so
+// the modal stays hidden. (Tests that DO want to assert on the modal can clear
+// the flag in their own setup.)
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    try { localStorage.setItem('ahg-onboarding-dismissed-v1', '1'); } catch { /* ignore */ }
+  });
+});
+
+test.describe('Open Harness Studio UI', () => {
   test('loads with no console errors and renders the hero', async ({ page }) => {
     const errors: string[] = [];
     page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
     page.on('pageerror', (e) => errors.push(e.message));
 
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Agent Harness Studio/i })).toBeVisible();
+    // iter 118 — heading renamed Agent Harness Studio → Open Harness Studio.
+    await expect(page.getByRole('heading', { name: /Open Harness Studio/i })).toBeVisible();
     await expect(page.getByText(/Turn any GitHub repo/i)).toBeVisible();
     expect(errors, errors.join('\n')).toEqual([]);
   });
