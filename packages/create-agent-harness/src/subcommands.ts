@@ -175,7 +175,7 @@ export async function doctor(args: string[]): Promise<SubcommandResult> {
       lines.push('  WARN .claude-plugin/plugin.json is not valid JSON');
     }
   } else {
-    lines.push('  WARN .claude-plugin/plugin.json absent — `claude -p --plugin-dir` won\'t load this harness as a plugin. Re-scaffold with metaharness@0.1.3+ or `harness upgrade` to add it.');
+    lines.push('  WARN .claude-plugin/plugin.json absent — `claude -p --plugin-dir` won\'t load this harness as a plugin. Run `npx metaharness harness plugin-init` to backfill, or re-scaffold with metaharness@0.1.3+.');
   }
 
   if (problems === 0) {
@@ -340,6 +340,8 @@ export async function dispatch(subcommand: string, args: string[]): Promise<Subc
       return threatModelCmd(args.slice(0));
     case 'oia-manifest':
       return oiaManifestCmd(args.slice(0));
+    case 'plugin-init':
+      return (await import('./plugin-init-cmd.js')).pluginInitCmd(args.slice(0));
     case 'help':
     case undefined:
       return {
@@ -369,6 +371,7 @@ export async function dispatch(subcommand: string, args: string[]): Promise<Subc
           '  score         — 5-dimension harness scorecard (0–100, grade A/B/C/F) (iter 111)',
           '  threat-model  — MCP threat-model artifact (enterprise review) (iter 112)',
           '  oia-manifest  — emit .harness/oia-manifest.json (ADR-034 OIA v0.1) (iter 121)',
+          '  plugin-init   — backfill .claude-plugin/plugin.json for legacy harnesses (iter 135)',
           '  help      — show this message',
           '',
           'Flags:',
