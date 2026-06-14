@@ -4,6 +4,37 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 92 (2026-06-14)
+
+- **ADR-029 — Cross-Language Invariants and Defense-in-Depth Catalog
+  Gates**. iter 85→89 built a 4-layer defense around catalog
+  correctness; iter 92 documents the architecture before the lesson
+  fragments into 5 CHANGELOG entries.
+- **The 4 layers documented, ordered by failure-surface latency**:
+  1. `healthcheck.catalogCount` (iter 86) — pre-push on contributor's
+     laptop, `<1s`
+  2. CI Node-job `healthcheck` step — per push, per-OS-per-Node, `<1s`
+  3. `examples/vertical-tour` in CI (iter 89) — per push, `~1.1s`,
+     proves each template actually scaffolds + validates
+  4. `generated-templates.test.ts` (TS) + `crates/template-catalog/tests`
+     (Rust) — per-template structural pins
+- **The cross-language counter recipe** — generic pattern for any
+  "same count in N languages" invariant. JSON wins ties; TS test and
+  Rust test extract via regex; healthcheck pins them together.
+  Future "host count in N places", "skill count in N places", etc.
+  invariants follow the same recipe.
+- **4 alternatives explicitly rejected** with rationale: code-gen Rust
+  from TS (breaks no-Node Rust build), eliminate Rust count assertion
+  (Rust crate ships independently), set-equality instead of count
+  (more code, no extra catches), JSON schema validator (scope creep).
+- **6 required tests** referenced — all already exist + pass:
+  catalogCount + default 8-check set + vertical-tour ordering +
+  vertical-tour HEALTHY + TS template count + Rust template count.
+- `docs/adrs/INDEX.md` updated — ADR-029 row appended after ADR-028
+  with one-line summary of the 4 layers + the recipe.
+- `adr-index.test.ts` 3/3 still passes — the index-pin test honours
+  the new entry.
+
 ### Changed — Iter 91 (2026-06-14)
 
 - **iter-90's `diag --bundle` now surfaces across all 4 user-facing
