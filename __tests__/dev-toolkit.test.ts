@@ -55,17 +55,17 @@ describe('scripts/dev-toolkit.mjs', () => {
     }
   });
 
-  // iter 83 — runnable example demos in examples/ are part of new
-  // contributor orientation. Pin all 4 so adding a 5th vertical example
-  // can't silently drop one of the existing four.
-  it('lists all 4 runnable example demos (iter 83)', async () => {
+  // iter 83 + iter 88 — runnable example demos in examples/ are part of
+  // new contributor orientation. Pin all 5 so adding a 6th can't drop
+  // any of the existing ones.
+  it('lists all 5 runnable example demos (iter 83 + iter 88)', async () => {
     const r = await run();
     expect(r.stdout).toMatch(/Runnable example demos \(examples\/\)/);
-    for (const demo of ['quickstart', 'federation', 'host-tour', 'education']) {
+    for (const demo of ['quickstart', 'federation', 'host-tour', 'education', 'vertical-tour']) {
       expect(r.stdout, `missing demo: ${demo}`).toContain(demo);
     }
     // Each demo's command line is shown as `$ node examples/<name>/<name>.mjs`
-    for (const demo of ['quickstart', 'federation', 'host-tour', 'education']) {
+    for (const demo of ['quickstart', 'federation', 'host-tour', 'education', 'vertical-tour']) {
       expect(r.stdout, `missing demo command: ${demo}`).toMatch(
         new RegExp(`node examples\\/${demo}\\/${demo}\\.mjs`),
       );
@@ -79,9 +79,9 @@ describe('scripts/dev-toolkit.mjs', () => {
     expect(Array.isArray(parsed.scripts)).toBe(true);
     expect(Array.isArray(parsed.harnessSubcommands)).toBe(true);
     expect(Array.isArray(parsed.entryPoints)).toBe(true);
-    // iter 83 — examples array surfaces in --json too
+    // iter 83 + iter 88 — examples array surfaces in --json too
     expect(Array.isArray(parsed.examples), 'json missing examples array').toBe(true);
-    expect(parsed.examples.length).toBe(4);
+    expect(parsed.examples.length).toBe(5);
     expect(parsed.ci?.jobs?.length).toBeGreaterThanOrEqual(6);
   });
 

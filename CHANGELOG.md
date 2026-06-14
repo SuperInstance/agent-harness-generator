@@ -4,6 +4,40 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 88 (2026-06-14)
+
+- **`examples/vertical-tour/`** — analogue of iter-55's `host-tour/`:
+  one script scaffolds + validates EVERY vertical (currently 17,
+  excluding `minimal`) in ~1.1 seconds. Closes the per-vertical-example
+  combinatorial trap: instead of writing a separate `examples/<vertical>/`
+  for each of 17 verticals (and the 6-host fanout of 102 unique
+  scaffolds), one script proves the whole catalog scaffolds cleanly.
+- **Reads the actually-registered TEMPLATES** — imports from the built
+  generator's `TEMPLATES` export, not a hardcoded list. Adding a new
+  vertical to `catalog.def.mjs` + `TEMPLATES` automatically covers it
+  here; no per-vertical test maintenance.
+- **Output is a markdown table** with file count, byte count, wall time,
+  HEALTHY/FAIL per vertical. Exits non-zero with the names of any
+  failing verticals.
+- **`--json`** for CI scripts; **`--host=<id>`** to run on any of 6
+  hosts.
+- **`__tests__/examples-vertical-tour.test.ts`** (4 cases):
+  - script + README exist
+  - default host (claude-code) → HEALTHY for every vertical
+  - `--json` emits parseable JSON with `failed: 0` + every report
+    healthy
+  - newest two verticals (`vertical:education` iter 80,
+    `vertical:sales` iter 87) appear in the printout
+- **`dev-toolkit.mjs`** examples list grows 4 → **5** (+ vertical-tour
+  entry with iter 88 + `~1.1s` wall + description); test updated to
+  pin all 5.
+- TS suite: **583/583** (was 578; +4 vertical-tour cases + the
+  dev-toolkit expectation bump). Local run output:
+  ```
+  Total wall time: 1100ms across 17 verticals (host=claude-code).
+  [vertical-tour] DONE — 17/17 verticals HEALTHY in 1100ms
+  ```
+
 ### Added — Iter 87 (2026-06-14)
 
 - **`vertical:sales` — 18th vertical template**. Second new product

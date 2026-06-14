@@ -119,6 +119,7 @@ const EXAMPLE_DEMOS = [
   { name: 'federation', cmd: 'node examples/federation/federation.mjs', wall: '~20ms', what: 'Two-instance federation handshake demo', iter: 40 },
   { name: 'host-tour',  cmd: 'node examples/host-tour/host-tour.mjs',  wall: '~200ms', what: 'Scaffold + validate for ALL 6 hosts in one run', iter: 55 },
   { name: 'education',  cmd: 'node examples/education/education.mjs',  wall: '~200ms', what: 'Scaffold vertical:education → 4-agent shape + validate', iter: 82 },
+  { name: 'vertical-tour', cmd: 'node examples/vertical-tour/vertical-tour.mjs', wall: '~1.1s', what: 'Scaffold + validate ALL 17 verticals in one run', iter: 88 },
 ];
 
 async function checkHealth() {
