@@ -1,0 +1,75 @@
+{
+  "objective": "Build DRACO — Cross-Domain Benchmark for Deep Research (ADR-037) as the quality gate for the vertical:research harness, with a re-runnable PROOF score",
+  "repo": "ruvnet/agent-harness-generator",
+  "adr": "docs/adrs/ADR-037-draco-deep-research-benchmark.md",
+  "startedAt": "2026-06-14",
+  "milestones": {
+    "M1": {
+      "name": "Corpus v1 + schema + checksum gate",
+      "status": "COMPLETE",
+      "completedAt": "2026-06-14",
+      "commitSha": "941b0b9",
+      "artifacts": [
+        "packages/bench/draco/corpus.json",
+        "packages/bench/draco/schema.json",
+        "packages/bench/draco/README.md",
+        "packages/bench/__tests__/draco-corpus.test.ts",
+        "packages/bench/package.json"
+      ],
+      "metrics": {
+        "questions": 20,
+        "domains": 5,
+        "testsAdded": 15,
+        "totalTestsPass": 34,
+        "corpusSha256": "8313aea814ef60efd56bebe3592884dc9e3f2d42e875b70dcde99f9460e4fe4f"
+      }
+    },
+    "M2": {
+      "name": "OpenRouter fusion client + OPENROUTER_API_KEY wired into GCP-secret gate",
+      "status": "PENDING",
+      "entryPoint": {
+        "firstReads": [
+          "scripts/validate-gcp-secrets.mjs",
+          "packages/bench/draco/corpus.json"
+        ],
+        "createFiles": [
+          "packages/bench/draco/fusion-client.ts",
+          "packages/bench/draco/model-map.ts"
+        ],
+        "modifyFiles": [
+          "scripts/validate-gcp-secrets.mjs (add OPENROUTER_API_KEY to REQUIRED_SECRETS)"
+        ],
+        "constraints": [
+          "No live API calls without OPENROUTER_API_KEY in env",
+          "Client must record {stage, model, promptTokens, completionTokens, wallMs} per call",
+          "Must be mockable for M3 deterministic scorer tests",
+          "Stage names: decompose | search | grade | synthesize | verify | cite"
+        ]
+      }
+    },
+    "M3": {
+      "name": "Deterministic scorer + --no-judge runner + first baseline",
+      "status": "PENDING",
+      "notes": "Grounding (URL re-fetch), Coverage (regex+embedding), Balance, Efficiency. --no-judge skips Faithfulness. Writes packages/bench/draco/runs/<iso>.json."
+    },
+    "M4": {
+      "name": "LLM-judge dimension + full proof JSON",
+      "status": "PENDING",
+      "notes": "Judge model pinned per corpus version. Prompt pinned. Faithfulness dimension (0-1). Full proof JSON shape defined in ADR-037 §4."
+    },
+    "M5": {
+      "name": "harness draco subcommand + bench-baseline regression gate + CI job + README score row",
+      "status": "PENDING"
+    },
+    "M6": {
+      "name": "Fusion-vs-single-model ablation — the proof",
+      "status": "PENDING",
+      "notes": "Run same corpus with single-model end-to-end vs fusion harness. Prove different-verifier-model design wins on grounding + faithfulness."
+    }
+  },
+  "lastSession": {
+    "date": "2026-06-14",
+    "accomplished": "M1 fully delivered and pushed (commit 941b0b9 on main). 20 questions, 5 domains, 15 tests all pass, bench:draco stub wired.",
+    "nextAction": "M2 — read scripts/validate-gcp-secrets.mjs first, then build packages/bench/draco/fusion-client.ts with model-per-stage routing and provenance recording."
+  }
+}
