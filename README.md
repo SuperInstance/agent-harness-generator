@@ -1,10 +1,12 @@
 <div align="center">
 
-# agent-harness-generator
+# MintAgent
 
-### Paste any GitHub repo. Get a custom AI agent harness for it.
+### Mint a custom AI agent harness from any repo.
 
-[**Open the Studio →**](https://ruvnet.github.io/agent-harness-generator/)
+`npx mintagent` · [open the Studio →](https://ruvnet.github.io/agent-harness-generator/)
+
+<sub>(Repo: `ruvnet/agent-harness-generator` · CLI: `mintagent` · Library: `@ruvnet/agent-harness-generator`)</sub>
 
 [![Open the Studio](https://img.shields.io/badge/Studio-open_in_browser_↗-7c5cff?style=for-the-badge&logo=githubpages&logoColor=white)](https://ruvnet.github.io/agent-harness-generator/)
 [![User guide](https://img.shields.io/badge/User_guide-plain_language-22c55e?style=for-the-badge)](docs/USERGUIDE.md)
@@ -21,7 +23,7 @@
 
 **Every serious repo deserves its own agent.** A repo-aware CLI, a repo-aware coding agent, a local MCP server, memory scoped to the project, skills generated from the actual file layout, governance policy, release verification, witness-signed provenance.
 
-`agent-harness-generator` builds those, on demand, from a GitHub URL or a blank slate. **It is not another agent framework. It is a factory for agent frameworks.**
+`mintagent` mints those, on demand, from a GitHub URL or a blank slate. **It is not another agent framework. It is a factory for agent frameworks.**
 
 The model is replaceable. The harness is the product.
 

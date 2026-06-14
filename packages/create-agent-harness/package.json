@@ -1,7 +1,7 @@
 {
   "name": "mintagent",
   "version": "0.1.0",
-  "description": "Paste any GitHub repo → get a custom AI agent harness. Browser Studio + npx CLI. Runs on Claude Code, Codex, pi.dev, Hermes, OpenClaw, RVM.",
+  "description": "MintAgent — mint a custom AI agent harness from any repo. Browser Studio + `npx mintagent` CLI. Runs on Claude Code, Codex, pi.dev, Hermes, OpenClaw, RVM.",
   "homepage": "https://github.com/ruvnet/agent-harness-generator",
   "repository": {
     "type": "git",

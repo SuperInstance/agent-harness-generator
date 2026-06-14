@@ -25,6 +25,8 @@ const SUBCOMMANDS = [
   'compare',
   // iter 110 — 7-section readiness scorecard for a local repo
   'genome',
+  // iter 111 — 5-dimension harness scorecard with badges
+  'score',
   'help',
 ] as const;
 
@@ -92,6 +94,7 @@ _harness() {
     'export-config:emit MCP servers + claims + permissions as a single JSON'
     'compare:diff two harnesses (manifest + per-file fingerprints, ADR-031 --bundle)'
     'genome:7-section readiness scorecard for a local repo (--json/--bundle, iter 110)'
+    'score:5-dimension harness scorecard 0–100 with badges (--json/--bundle, iter 111)'
     'help:show help'
   )
 
