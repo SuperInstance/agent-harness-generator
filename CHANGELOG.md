@@ -4,6 +4,36 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 79 (2026-06-14)
+
+- **ADR-028 — Skew Detection and Liveness — One Probe, Many Surfaces**.
+  Iters 66-78 built a complete skew + liveness fabric (`harness diag`,
+  `--probe-pages`, validate umbrella chain, release.mjs gate,
+  pages.yml verify) without an ADR explaining the design rationale.
+  iter 79 captures it before the knowledge fragments into 13
+  CHANGELOG entries.
+- **Five architectural decisions documented**:
+  1. Two orthogonal axes — **skew** (informational by default) vs
+     **liveness** (blocking by default)
+  2. Skew detected by comparing `manifest.meta.*` fields to locally-
+     resolved versions; one `skewVerdict()` comparator
+  3. Liveness is one HTTP probe (`healthcheck --probe-pages`) with
+     three callers (`healthcheck`, `preflight`/`release.mjs`,
+     `pages.yml` verify)
+  4. Exit code semantics per consumer context (table) — standalone
+     diag fails on real skew; validate umbrella never fails on it
+  5. JSON output delegates to text formatter for exit-code resolution
+     so both surfaces stay in lockstep forever
+- **4 alternatives explicitly rejected** with rationale:
+  block release on kernel skew (wrong layer), re-implement the HTTP
+  probe per consumer (breeds drift), `postinstall` hook auto-skew-check
+  (anti-pattern), keep diag out of validate (decided informational
+  per iter 76).
+- **6 required tests** referenced from existing test files.
+- `docs/adrs/INDEX.md` updated — ADR-028 entry appended.
+- `__tests__/adr-index.test.ts` 3/3 still pass — the index-pin test
+  honours the new entry.
+
 ### Added — Iter 78 (2026-06-14)
 
 - **`pages.yml` now self-verifies after every deploy** — closes the
