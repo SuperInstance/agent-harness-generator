@@ -126,6 +126,9 @@ After scaffolding, every harness has a `harness` CLI:
 | Smoke-check the scaffold | `harness doctor` |
 | Run every release gate | `harness validate` |
 | Check kernel ↔ harness compatibility | `harness diag` |
+| Score the harness 0-100 with badges | `harness score` |
+| Pre-scaffold: is this REPO ready for an agent? | `harness genome <repo>` |
+| MCP threat-model artifact for a PR review | `harness threat-model` |
 | File a useful support ticket | `harness diag --bundle > bundle.json` |
 | Diff two harnesses | `harness compare a/ b/` |
 | Share MCP + Bash + claims config for review | `harness export-config` |
@@ -136,7 +139,7 @@ After scaffolding, every harness has a `harness` CLI:
 | Pin the manifest to IPFS | `harness publish --confirm` |
 | Recommend a harness from a repo | `harness analyze-repo` |
 
-17 subcommands total. Every one respects `--help` / `-h`. Shell completion: `harness completions bash | zsh | fish`.
+20 subcommands total. Every one respects `--help` / `-h`. Shell completion: `harness completions bash | zsh | fish`.
 
 📖 Full reference: [docs/USAGE.md](docs/USAGE.md)
 

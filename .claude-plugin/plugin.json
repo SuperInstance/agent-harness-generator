@@ -43,7 +43,10 @@
     "verify-witness",
     "upgrade-harness",
     "diag-harness",
-    "compare-harnesses"
+    "compare-harnesses",
+    "repo-genome",
+    "score-harness",
+    "threat-model"
   ],
   "commands": [
     {
@@ -77,6 +80,18 @@
     {
       "name": "compare-harnesses",
       "description": "Diff two scaffolded harnesses: manifest meta + host list + per-file SHA-256 fingerprints. Exit 0 IDENTICAL, 1 DRIFT, 2 missing manifest. --bundle emits ADR-031 schema-1 JSON for CI."
+    },
+    {
+      "name": "repo-genome",
+      "description": "7-section readiness scorecard for a LOCAL repo — repo type, agent topology, MCP risk, test confidence, release readiness, recommended plan, scorecard. The 'is this repo READY for a harness?' question (iter 110)."
+    },
+    {
+      "name": "score-harness",
+      "description": "5-dimension 0-100 harness scorecard with 6-field badge block (score + mcpRisk + 4 booleans). Grade A/B/C/F. Target: A (>=85) without manual edits (iter 111)."
+    },
+    {
+      "name": "threat-model",
+      "description": "MCP threat-model artifact for PR / compliance review — allowed/denied tools, dangerous perms, secrets reachability, network/shell/file-write grants, default-deny posture (iter 112, 'enterprise gold')."
     }
   ],
   "permissions": ["memory", "filesystem", "network"],
