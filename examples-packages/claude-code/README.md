@@ -63,3 +63,7 @@ A: Yes — that's why `plugin.json` is at the root. Run `claude -p --plugin-dir 
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/79808ffb89eeb080b1c00bf79fba33e1

@@ -67,3 +67,7 @@ Yes. Each agent is a standalone markdown file in `agents/`. Edit the `model:` fr
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/72e46e135dbf10df91d819072802578d

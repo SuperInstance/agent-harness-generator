@@ -57,3 +57,7 @@ Yes. Each agent's frontmatter has a `model` field. Drop `playtest-critic` to `ha
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/89ab98e6e5f082a376170a941c9d1914

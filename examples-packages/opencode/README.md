@@ -71,3 +71,7 @@ A: Yes. Drop server declarations into `.opencode/mcp/` and re-run `harness valid
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/e620f3ee6fd0a71bb7c76237e09cb7a4

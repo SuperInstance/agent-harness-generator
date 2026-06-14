@@ -54,3 +54,7 @@ Tune model routing in `harness.config.json` — set `triager.model` to `sonnet` 
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/a1e9a4b3da25e64ccfcc1124515f722d

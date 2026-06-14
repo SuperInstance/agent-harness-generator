@@ -80,3 +80,7 @@ A: Drop a markdown file into `runbooks/`. The `runbook-runner` agent discovers t
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/7c2975652c9be393536a71cdafc358f3

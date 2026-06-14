@@ -67,3 +67,7 @@ A: Add a markdown spec under `strategies/`, then ask the strategist agent to imp
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/fa8db9614701ebde371cdd327031537e

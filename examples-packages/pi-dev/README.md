@@ -69,3 +69,7 @@ A: So `harness doctor` has a real file to validate against. Add MCP servers with
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/ec3c2bb303ba99d83dc5cb36306d6380

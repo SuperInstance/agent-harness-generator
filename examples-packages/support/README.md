@@ -63,3 +63,7 @@ A: Yes. Delete `agents/escalator.md` and remove the escalator handoff line in `C
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/97a386e2c52cf15c6ec6d33386386180

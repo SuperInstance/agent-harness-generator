@@ -65,3 +65,7 @@ A: Progress goes through the MCP server defined in `.mcp.json` — by default a 
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/c459b1590580a91bee8cc879140196c6

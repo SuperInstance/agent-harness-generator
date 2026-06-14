@@ -64,3 +64,7 @@ This package pins `--template minimal --host codex` so you skip the prompts. Und
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/0fbbffdbeebee890f688b378f99a271a

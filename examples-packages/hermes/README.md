@@ -71,3 +71,7 @@ A: Local secrets live in `.harness/settings.json`, which is gitignored. Add `ANT
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/873383a86723de0d3ef54273e1ff92d1

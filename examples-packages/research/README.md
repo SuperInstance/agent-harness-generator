@@ -72,3 +72,7 @@ A: Cost and accuracy. Fan-out search and citation normalization are cheap haiku 
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/7ad69e82554b1f144aa4f5b34498536b

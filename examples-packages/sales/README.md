@@ -68,3 +68,7 @@ Edit `harness.config.json` → `routing.tiers`. Each agent name maps to `haiku`,
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/e9cf34f47cf78308196a6e65c4a35322

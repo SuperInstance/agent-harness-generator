@@ -69,3 +69,7 @@ A: Copy `.openclaw/agents/<starter>.json`, rename it, edit the `name` and `promp
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/d88608ce148db9ca410243d35997d38a

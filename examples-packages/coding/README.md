@@ -72,3 +72,7 @@ A: The scaffold is versioned, includes `harness doctor` / `harness validate` so 
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/640c8b74b2e57690f81d130acf3cf439

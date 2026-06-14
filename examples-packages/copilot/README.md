@@ -66,3 +66,7 @@ A: Yes, and it's recommended for team consistency. Keep secrets out of it — us
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/532201b1e66c528df87857002a1c0ad9

@@ -69,3 +69,7 @@ A: Edit `settings.json` and change the `host` field, then run `harness doctor`. 
 ## License
 
 MIT. Built on metaharness (https://www.npmjs.com/package/metaharness).
+
+## Deep-dive
+
+Full explainer gist: https://gist.github.com/ruvnet/28353c033434e68f2c853546c0f99963
