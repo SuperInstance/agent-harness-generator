@@ -13,14 +13,31 @@ for (const host of HOSTS) {
   let proof = '';
   try {
     if (host === 'claude-code') {
-      // Real e2e: invoke claude -p inside the harness; settings.json + MCP
-      // registration must not error and the model must respond.
-      const out = execSync(
-        `cd "${dir}" && claude -p --allow-dangerously-skip-permissions "Reply with exactly: HARNESS_${host.toUpperCase().replace(/-/g, '_')}_OK"`,
+      // iter 131 — two real e2e proofs for claude-code:
+      //   A) `claude -p` from inside the harness (workspace .claude/settings.json scope)
+      //   B) `claude -p --plugin-dir <harness>` (plugin scope, .claude-plugin/plugin.json)
+      const tag = `HARNESS_${host.toUpperCase().replace(/-/g, '_')}_OK`;
+      const outA = execSync(
+        `cd "${dir}" && claude -p --allow-dangerously-skip-permissions "Reply with exactly: ${tag}"`,
         { encoding: 'utf-8', timeout: 120000 }
       ).trim();
-      const ok = out.includes(`HARNESS_${host.toUpperCase().replace(/-/g, '_')}_OK`);
-      results.push({ host, status: ok ? 'PASS' : 'FAIL', tool: 'claude -p', proof: out.slice(0, 80) });
+      const okA = outA.includes(tag);
+      let okB = false, outB = 'skipped (no .claude-plugin/plugin.json)';
+      const pluginPath = `${dir}/.claude-plugin/plugin.json`;
+      if (existsSync(pluginPath)) {
+        outB = execSync(
+          `claude -p --allow-dangerously-skip-permissions --plugin-dir "${dir}" "Reply with exactly: PLUGIN_${tag}"`,
+          { encoding: 'utf-8', timeout: 120000 }
+        ).trim();
+        okB = outB.includes(`PLUGIN_${tag}`);
+      }
+      const status = okA && (okB || outB.startsWith('skipped')) ? 'PASS' : 'FAIL';
+      results.push({
+        host,
+        status,
+        tool: okB ? 'claude -p + --plugin-dir' : 'claude -p',
+        proof: okB ? `${outA.slice(0, 30)} | plugin: ${outB.slice(0, 30)}` : outA.slice(0, 60),
+      });
     } else {
       // Hosts without a runtime in CI — do schema-level verification of the
       // host's emitted config file.

@@ -162,9 +162,42 @@ jobs:
           EOF
           node smoke.mjs
 
+  smoke-all-hosts:
+    # iter 131 — wire scripts/verify-all-hosts.mjs into the CI guard.
+    # Scaffolds for every host from the LIVE npm registry and verifies
+    # each harness loads in its target runtime (where installable) or
+    # satisfies the documented schema (where not). The claude-code job
+    # uses the Anthropic claude CLI under `claude -p` AND
+    # `claude -p --plugin-dir <harness>` once iter-131 lands the
+    # .claude-plugin/plugin.json template entry.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: Scaffold a harness for every host from `npx metaharness@latest`
+        shell: bash
+        run: |
+          mkdir -p /tmp/all-hosts && cd /tmp/all-hosts
+          for host in claude-code codex pi-dev hermes openclaw rvm copilot opencode; do
+            echo ""
+            echo "=== HOST: $host ==="
+            rm -rf "bot-$host"
+            npx --yes metaharness@latest "bot-$host" \
+              --template minimal --host "$host" --force
+          done
+
+      - name: Run verify-all-hosts.mjs (schema + dep check; runtime where available)
+        shell: bash
+        working-directory: /tmp/all-hosts
+        run: |
+          cp ${{ github.workspace }}/scripts/verify-all-hosts.mjs .
+          node verify-all-hosts.mjs
+
   notify-on-fail:
     runs-on: ubuntu-latest
-    needs: [smoke-published-cli, smoke-published-lib]
+    needs: [smoke-published-cli, smoke-published-lib, smoke-all-hosts]
     if: failure() && github.event_name == 'schedule'
     steps:
       - name: Open issue on scheduled-cron failure
