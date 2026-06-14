@@ -118,6 +118,44 @@ Each ships bespoke domain agents (with system prompts), skills, commands, and pe
 
 ---
 
+## One-command examples
+
+Don't want to pick flags? Each host and vertical has a dedicated
+`@metaharness/*` wrapper — one `npx` away, no template/host flags to
+remember. A scaffold from a wrapper is byte-identical to the equivalent
+`metaharness` invocation.
+
+> **Heads-up:** the `@metaharness/*` wrappers are built and CI-verified
+> ([`examples-packages/`](examples-packages/)) but publish to npm once the
+> `@metaharness` org is live. Until then, use the equivalent
+> `npx metaharness my-bot --template <id> --host <id>` form shown above.
+
+```bash
+# Host integrations
+npx @metaharness/claude-code  my-bot   # Claude Code workspace + plugin
+npx @metaharness/codex        my-bot   # OpenAI Codex
+npx @metaharness/hermes       my-bot   # Hermes cli-config
+npx @metaharness/pi-dev       my-bot   # pi.dev AGENTS.md
+npx @metaharness/openclaw     my-bot   # OpenClaw .openclaw/
+npx @metaharness/rvm          my-bot   # RVM deployment partition
+npx @metaharness/copilot      my-bot   # VSCode / Copilot mcp.json
+npx @metaharness/opencode     my-bot   # OpenCode .opencode/
+
+# Vertical workflows (ready-made multi-agent pods)
+npx @metaharness/devops          my-bot   # incident response
+npx @metaharness/research        my-bot   # multi-source dossier
+npx @metaharness/trading         my-bot   # quant trading (paper-by-default)
+npx @metaharness/support         my-bot   # customer support
+npx @metaharness/legal           my-bot   # contract redline (drafts only)
+npx @metaharness/repo-maintainer my-bot   # OSS repo maintainer
+# …plus education, sales, gaming, coding
+```
+
+Source + per-package README for all 18: [`examples-packages/`](examples-packages/) ·
+plain-language deep-dive gists: [`examples-packages/GISTS.md`](examples-packages/GISTS.md).
+
+---
+
 ## Day-to-day commands
 
 After scaffolding, every harness has a `harness` CLI:
