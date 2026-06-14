@@ -22,6 +22,7 @@ import { upgradeCmd } from './upgrade-cmd.js';
 import { completionsCmd } from './completions-cmd.js';
 import { sbomCmd } from './sbom-cmd.js';
 import { auditCmd } from './audit-cmd.js';
+import { mcpScanCmd } from './mcp-scan.js';
 
 // Pull the version from the workspace package.json (Node's `with: { type: 'json' }`
 // import attributes — works in Node 20.10+).
@@ -259,6 +260,8 @@ export async function dispatch(subcommand: string, args: string[]): Promise<Subc
       return sbomCmd(args.slice(0));
     case 'audit':
       return auditCmd(args.slice(0));
+    case 'mcp-scan':
+      return mcpScanCmd(args.slice(0));
     case 'help':
     case undefined:
       return {
@@ -279,6 +282,7 @@ export async function dispatch(subcommand: string, args: string[]): Promise<Subc
           '  completions — emit shell completion (bash | zsh | fish)',
           '  sbom      — emit SPDX-2.3 SBOM for the harness (npm)',
           '  audit     — npm audit per-harness with structured output',
+          '  mcp-scan  — security-scan the harness MCP surface (policy + perms + deps)',
           '  help      — show this message',
           '',
           'Flags:',

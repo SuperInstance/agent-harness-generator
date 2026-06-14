@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildScaffold } from '../scaffold';
 import { totalBytes } from '../zip';
+import { DEFAULT_PRIMITIVES, SAFE_MCP_POLICY } from '../types';
 import type { HarnessConfig } from '../types';
 
 const base: HarnessConfig = {
@@ -14,6 +15,8 @@ const base: HarnessConfig = {
   agents: ['responder', 'escalator'],
   skills: ['memory-inspect'],
   commands: ['doctor'],
+  primitives: DEFAULT_PRIMITIVES,
+  mcpPolicy: SAFE_MCP_POLICY,
 };
 
 function paths(cfg: HarnessConfig) {

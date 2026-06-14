@@ -4,5 +4,6 @@ export * from './types';
 export * from './render';
 export * from './catalog';
 export * from './artifacts';
+export * from './mcp';
 export * from './scaffold';
 export * from './zip';

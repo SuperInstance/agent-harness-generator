@@ -46,6 +46,18 @@ test.describe('Agent Harness Generator UI', () => {
     await expect(page.getByRole('button', { name: 'orchestrator.ts' })).toBeVisible();
   });
 
+  test('MCP primitive: toggling mode adds/removes the src/mcp surface', async ({ page }) => {
+    await page.goto('/');
+    // Default is local — the server file should be in the tree.
+    await expect(page.getByRole('button', { name: 'server.ts' })).toBeVisible();
+    // Switch MCP off.
+    await page.getByRole('button', { name: 'Off', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'server.ts' })).toHaveCount(0);
+    // Switch to remote — auth.ts should now appear.
+    await page.getByRole('button', { name: 'Remote', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'auth.ts' })).toBeVisible();
+  });
+
   test('invalid name blocks download and shows the reason', async ({ page }) => {
     await page.goto('/');
     await page.getByLabel('Harness name').fill('Bad--Name');

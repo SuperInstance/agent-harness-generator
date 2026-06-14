@@ -14,7 +14,9 @@ import {
   zipFilesUnder,
 } from '../generator';
 import type { GenFile, HarnessConfig, HostId, TemplateId } from '../generator';
-import { Chip, Field, Section } from './ui';
+import { DEFAULT_PRIMITIVES, SAFE_MCP_POLICY } from '../generator';
+import type { McpMode, McpPolicy } from '../generator';
+import { Chip, Field, Section, SegTabs } from './ui';
 import { FileTree } from './FileTree';
 
 const DEFAULT_TEMPLATE = 'vertical:coding';
@@ -32,6 +34,8 @@ const INITIAL: HarnessConfig = {
   memory: 'agentdb',
   routing: '3-tier',
   marketplace: 'powered-by',
+  primitives: DEFAULT_PRIMITIVES,
+  mcpPolicy: SAFE_MCP_POLICY,
   ...defaultsFor(DEFAULT_TEMPLATE),
 };
 
@@ -193,6 +197,87 @@ export function HarnessBuilder() {
                 <option value="independent">Independent</option>
               </select>
             </Field>
+          </div>
+        </Section>
+
+        <Section
+          title="Primitives"
+          desc="MCP is one selectable primitive — not the whole product. Toggle what the harness ships."
+        >
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-2">
+              {(
+                [
+                  ['cli', 'CLI'],
+                  ['memory', 'Memory namespace'],
+                  ['learning', 'Learning loop'],
+                  ['witness', 'Witness signing'],
+                  ['releaseGates', 'Release gates'],
+                ] as const
+              ).map(([k, label]) => (
+                <Chip
+                  key={k}
+                  active={cfg.primitives[k]}
+                  onClick={() => patch({ primitives: { ...cfg.primitives, [k]: !cfg.primitives[k] } })}
+                >
+                  {label}
+                </Chip>
+              ))}
+            </div>
+
+            <div className="rounded-lg border border-ink-700 bg-ink-900/50 p-3">
+              <div className="mb-2 flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-sm font-semibold text-white">MCP server</div>
+                  <div className="text-xs text-slate-400">stdio (local) for desktop · Streamable HTTP (remote) for hosted/team</div>
+                </div>
+                <SegTabs<McpMode>
+                  value={cfg.primitives.mcp}
+                  onChange={(m) => patch({ primitives: { ...cfg.primitives, mcp: m } })}
+                  options={[
+                    { id: 'off', label: 'Off' },
+                    { id: 'local', label: 'Local' },
+                    { id: 'remote', label: 'Remote' },
+                  ]}
+                />
+              </div>
+
+              {cfg.primitives.mcp !== 'off' && (
+                <div className="mt-3 border-t border-ink-700 pt-3">
+                  <div className="field-label flex items-center gap-2">
+                    Security policy
+                    <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-emerald-300">
+                      default-deny
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {(
+                      [
+                        ['allowNetwork', 'Allow network'],
+                        ['allowShell', 'Allow shell'],
+                        ['allowFileWrite', 'Allow file write'],
+                        ['requireApprovalForDangerous', 'Approve dangerous'],
+                        ['auditLog', 'Audit log'],
+                      ] as const
+                    ).map(([k, label]) => (
+                      <Chip
+                        key={k}
+                        active={cfg.mcpPolicy[k]}
+                        title={k === 'requireApprovalForDangerous' || k === 'auditLog' ? 'safe default ON' : 'off by default — opt in'}
+                        onClick={() => patch({ mcpPolicy: { ...cfg.mcpPolicy, [k]: !cfg.mcpPolicy[k] } as McpPolicy })}
+                      >
+                        {label}
+                      </Chip>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs text-slate-500">
+                    Emits <code className="text-slate-300">src/mcp/*</code> (server, tools, resources, prompts, policy, audit
+                    {cfg.primitives.mcp === 'remote' ? ', auth' : ''}) + a scannable{' '}
+                    <code className="text-slate-300">.harness/mcp-policy.json</code>.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </Section>
       </div>

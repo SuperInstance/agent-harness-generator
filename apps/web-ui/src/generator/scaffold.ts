@@ -7,6 +7,7 @@
 
 import { AGENTS, COMMANDS, HOSTS, SKILLS, TEMPLATES } from './catalog';
 import { buildCommandFile, buildSkillFile } from './artifacts';
+import { mcpFiles } from './mcp';
 import { render, toPascalCase } from './render';
 import type { GenFile, HarnessConfig, HostId } from './types';
 
@@ -52,6 +53,9 @@ export function buildScaffold(cfg: HarnessConfig): GenFile[] {
     files.push({ path: `.claude/commands/${f.path}`, content: f.content });
   }
 
+  // MCP primitive (modular, gated, security-first) — only when enabled.
+  files.push(...mcpFiles(cfg));
+
   // Per-host adapter wiring.
   for (const host of cfg.hosts) {
     files.push(...hostFiles(host, cfg));
@@ -67,20 +71,27 @@ export function buildScaffold(cfg: HarnessConfig): GenFile[] {
 // --- file builders ---------------------------------------------------------
 
 function packageJson(cfg: HarnessConfig): string {
+  const mcpOn = cfg.primitives.mcp !== 'off';
+  const scripts: Record<string, string> = {
+    build: 'tsc -b',
+    test: 'node --test',
+    doctor: `node bin/cli.js doctor`,
+  };
+  if (mcpOn) scripts.mcp = 'node dist/mcp/server.js';
   const pkg = {
     name: cfg.name,
     version: '0.1.0',
     description: cfg.description,
     type: 'module',
     bin: { [cfg.name]: 'bin/cli.js' },
-    scripts: {
-      build: 'tsc -b',
-      test: 'node --test',
-      doctor: `node bin/cli.js doctor`,
-      mcp: `node bin/cli.js mcp start`,
-    },
+    scripts,
     dependencies: { [KERNEL_DEP]: KERNEL_VERSION },
-    keywords: ['agent-harness', 'mcp', ...cfg.hosts, cfg.marketplace === 'powered-by' ? 'ruflo' : 'independent'],
+    keywords: [
+      'agent-harness',
+      ...(mcpOn ? ['mcp'] : []),
+      ...cfg.hosts,
+      cfg.marketplace === 'powered-by' ? 'ruflo' : 'independent',
+    ],
     license: 'MIT',
     engines: { node: '>=20.0.0' },
     harness: {
@@ -88,6 +99,7 @@ function packageJson(cfg: HarnessConfig): string {
       memory: cfg.memory,
       routing: cfg.routing,
       marketplace: cfg.marketplace,
+      primitives: cfg.primitives,
     },
   };
   return JSON.stringify(pkg, null, 2) + '\n';
@@ -168,6 +180,15 @@ function agentIndex(ids: string[]): string {
   return `// SPDX-License-Identifier: MIT\n${imports}\n\nexport const agents = [\n${list}\n];\n\nexport default agents;\n`;
 }
 
+/** The MCP server entry a host config registers, or null when MCP is off. */
+function mcpServerEntry(cfg: HarnessConfig): Record<string, unknown> | null {
+  if (cfg.primitives.mcp === 'off') return null;
+  if (cfg.primitives.mcp === 'remote') {
+    return { type: 'http', url: `https://localhost:8787/mcp`, headers: { Authorization: 'Bearer ${HARNESS_MCP_TOKEN}' } };
+  }
+  return { command: 'npx', args: ['-y', `${cfg.name}@latest`, 'mcp', 'start'] };
+}
+
 function hostFiles(host: HostId, cfg: HarnessConfig): GenFile[] {
   switch (host) {
     case 'claude-code':
@@ -179,29 +200,42 @@ function hostFiles(host: HostId, cfg: HarnessConfig): GenFile[] {
         { path: 'AGENTS.md', content: `# ${cfg.name}\n\n${cfg.description}\n\nThis pi.dev extension registers tools via \`pi.registerTool()\`.\n` },
         { path: 'SYSTEM.md', content: `You are ${cfg.name}. ${cfg.description}\n` },
       ];
-    case 'hermes':
-      return [{ path: 'cli-config.yaml', content: `name: ${cfg.name}\ndescription: ${cfg.description}\nmcp:\n  enabled: true\n  scrub_think_tags: true\n` }];
-    case 'openclaw':
-      return [{ path: '.openclaw/openclaw.json', content: JSON.stringify({ mcpServers: { [cfg.name]: { command: 'npx', args: ['-y', `${cfg.name}@latest`, 'mcp', 'start'] } } }, null, 2) + '\n' }];
+    case 'hermes': {
+      const files: GenFile[] = [
+        { path: 'cli-config.yaml', content: `name: ${cfg.name}\ndescription: ${cfg.description}\nmcp:\n  enabled: ${cfg.primitives.mcp !== 'off'}\n  scrub_think_tags: true\n` },
+      ];
+      if (cfg.primitives.mcp !== 'off') {
+        files.push({ path: `optional-mcps/${cfg.name}.json`, content: JSON.stringify({ [cfg.name]: mcpServerEntry(cfg) }, null, 2) + '\n' });
+      }
+      return files;
+    }
+    case 'openclaw': {
+      const server = mcpServerEntry(cfg);
+      const body = server ? { mcpServers: { [cfg.name]: server } } : { mcpServers: {} };
+      return [{ path: '.openclaw/openclaw.json', content: JSON.stringify(body, null, 2) + '\n' }];
+    }
     case 'rvm':
       return [{ path: 'rvm.manifest.toml', content: `[harness]\nname = "${cfg.name}"\nisolation = "hardware"\nwitness = "ed25519"\n` }];
   }
 }
 
 function claudeSettings(cfg: HarnessConfig): string {
-  const settings = {
+  const server = mcpServerEntry(cfg);
+  const settings: Record<string, unknown> = {
     permissions: {
-      allow: [`Bash(npx ${cfg.name}*)`, `mcp__${cfg.name}__*`],
+      allow: [`Bash(npx ${cfg.name}*)`, ...(server ? [`mcp__${cfg.name}__*`] : [])],
       deny: ['Read(./.env)', 'Read(./.env.*)'],
     },
-    mcpServers: {
-      [cfg.name]: { command: 'npx', args: ['-y', `${cfg.name}@latest`, 'mcp', 'start'] },
-    },
+    ...(server ? { mcpServers: { [cfg.name]: server } } : {}),
   };
   return JSON.stringify(settings, null, 2) + '\n';
 }
 
 function codexConfig(cfg: HarnessConfig): string {
+  if (cfg.primitives.mcp === 'off') return `# ${cfg.name} — MCP disabled at scaffold time.\n`;
+  if (cfg.primitives.mcp === 'remote') {
+    return `[mcp_servers.${cfg.name}]\ntype = "http"\nurl = "https://localhost:8787/mcp"\n`;
+  }
   return `[mcp_servers.${cfg.name}]\ncommand = "npx"\nargs = ["-y", "${cfg.name}@latest", "mcp", "start"]\n`;
 }
 
@@ -219,6 +253,8 @@ function harnessManifest(cfg: HarnessConfig): string {
       memory: cfg.memory,
       routing: cfg.routing,
       marketplace: cfg.marketplace,
+      primitives: cfg.primitives,
+      mcpPolicy: cfg.primitives.mcp === 'off' ? null : cfg.mcpPolicy,
       createdAt: '__GENERATED_AT__',
     },
     null,

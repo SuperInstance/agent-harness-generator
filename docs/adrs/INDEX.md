@@ -55,6 +55,7 @@ ADR-006 (memory + learning) and ADR-008 (drift detection) cut across all phases.
 | [ADR-019](./ADR-019-release-orchestration.md) | Release orchestration | Accepted | `scripts/release.mjs` composes version-bump + preflight + marketplace + dry-run + tag into one command; refuses dirty tree; per-step PASS/SKIP/FAIL gating. |
 | [ADR-020](./ADR-020-web-generator-ui.md) | Web generator UI | Accepted | `apps/web-ui` — client-only React/Vite generator. Composes harnesses + Claude skills/agents/commands, live preview, zip download. Renderer ported behaviour-for-behaviour from the CLI; parity test pins it. |
 | [ADR-021](./ADR-021-client-side-packaging-and-pages-deploy.md) | Client-side packaging + Pages deploy | Accepted | JSZip + Blob in-browser packaging (deterministic dates); `VITE_BASE` env-driven base path; gated GitHub Pages workflow (unit + e2e before deploy); UI isolated from the kernel workspace. |
+| [ADR-022](./ADR-022-mcp-primitive.md) | MCP as a modular, gated, security-first primitive | Accepted | MCP is one selectable primitive (off/local/remote), default-deny. Emits gated `src/mcp/*` + scannable `mcp-policy.json`; `harness mcp-scan` is "npm audit for agent tools"; policy is witness-bound. |
 
 ## Conventions used across the series
 
