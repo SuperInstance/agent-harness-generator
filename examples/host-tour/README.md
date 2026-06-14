@@ -1,5 +1,9 @@
 # host-tour — scaffold + validate for every supported host
 
+> Brought up to date in iter 128.2 — published CLI is now `metaharness`
+> (`npx metaharness <name> ...`); workspace-internal imports below still
+> reference the `packages/create-agent-harness/` source path by design.
+
 > One script, six hosts, one runnable demo of the multi-host parity story.
 
 ## Run

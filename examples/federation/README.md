@@ -1,5 +1,7 @@
 # Federation example
 
+> Brought up to date in iter 128.2 — published CLI is now `metaharness` (https://www.npmjs.com/package/metaharness). Install via `npx metaharness <name> ...`.
+
 Shows two harness instances coordinating via the federation transport.
 
 ## Scenario

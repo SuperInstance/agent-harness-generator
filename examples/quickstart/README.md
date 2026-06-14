@@ -1,5 +1,8 @@
 # quickstart — one-script end-to-end demo
 
+> Updated in iter 128.2 to track the published CLI name `metaharness` (https://www.npmjs.com/package/metaharness).
+> The script itself imports the workspace package directly, so no `npx metaharness …` is needed locally.
+
 > Zero-to-validated-harness in a single command. No npm install (beyond the workspace root), no network, no shell ceremony.
 
 ## Run it

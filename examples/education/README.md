@@ -1,6 +1,8 @@
 # education — runnable demo of `vertical:education` (iter 80)
 
 > Scaffold + validate a tutoring-pod harness in ~200ms, no network.
+>
+> _Updated in iter 128.2 — published CLI name is now `metaharness` (use `npx metaharness <name> ...` for user-facing scaffolds). Internal workspace imports below still reference the `packages/create-agent-harness/` source path._
 
 ## Run
 

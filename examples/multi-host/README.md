@@ -1,11 +1,13 @@
 # Multi-host example
 
+> Updated in iter 128.2 to use the published CLI name `metaharness` (https://www.npmjs.com/package/metaharness).
+
 Shows a single harness targeting both Claude Code AND Codex with the same kernel + content.
 
 ## What you'll see
 
 ```bash
-npx create-agent-harness ops-demo \
+npx metaharness ops-demo \
   --template vertical:devops \
   --host claude-code \
   --host codex

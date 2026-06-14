@@ -1,5 +1,7 @@
 # vertical-tour — scaffold + validate every vertical (iter 88)
 
+> Brought up to date in iter 128.2: published CLI is now `metaharness` (https://www.npmjs.com/package/metaharness). User-facing invocations use `npx metaharness …`; the workspace-internal imports below still load the in-repo `packages/create-agent-harness/` build.
+
 > 17 verticals scaffolded + validated in ~1 second on a clean checkout.
 
 Analogue of [`examples/host-tour/`](../host-tour/): one script proves the whole catalog scaffolds cleanly. Adding a new vertical is two lines in `catalog.def.mjs` (plus the iter-86 healthcheck cross-language sync); this tour automatically covers it because it reads the `TEMPLATES` export from the built generator, not a hardcoded list.
