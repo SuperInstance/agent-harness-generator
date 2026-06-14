@@ -105,6 +105,21 @@ describe('.github/workflows/*.yml', () => {
     expect(verifyBlock).toMatch(/healthcheck\.mjs --probe-pages/);
   });
 
+  // iter 89 — vertical-tour wired into ci.yml Node job. Per-push proof
+  // that all 17 verticals scaffold + validate cleanly across every
+  // OS-Node permutation, in ~1.1s.
+  it('ci.yml runs vertical-tour as a per-push smoke gate (iter 89)', async () => {
+    const ci = await readFile(join(WORKFLOWS, 'ci.yml'), 'utf-8');
+    expect(ci, 'ci.yml missing vertical-tour invocation').toMatch(
+      /node examples\/vertical-tour\/vertical-tour\.mjs/,
+    );
+    // Sits in the node job, AFTER healthcheck (per-OS-per-Node gate).
+    const healthcheckIdx = ci.search(/scripts\/healthcheck\.mjs/);
+    const tourIdx = ci.search(/examples\/vertical-tour\/vertical-tour\.mjs/);
+    expect(healthcheckIdx).toBeGreaterThan(0);
+    expect(tourIdx).toBeGreaterThan(healthcheckIdx);  // tour comes after healthcheck
+  });
+
   // iter 84 — daily scheduled liveness monitor (independent of pushes).
   it('pages-monitor.yml is a daily cron probe of the live Studio (iter 84)', async () => {
     const monitor = await readFile(join(WORKFLOWS, 'pages-monitor.yml'), 'utf-8');

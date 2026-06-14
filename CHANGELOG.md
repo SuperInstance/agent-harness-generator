@@ -4,6 +4,31 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 89 (2026-06-14)
+
+- **`vertical-tour` wired into `ci.yml`** Node job as a per-push smoke
+  gate. iter-88's tour proved 17 verticals scaffold + validate in ~1.1s
+  on a clean checkout; iter 89 makes that proof a CI invariant. Every
+  push gets per-OS-per-Node verification that the whole catalog
+  scaffolds cleanly across **3 OSes × 2 Node versions = 6 permutations**.
+- **Ordering**: runs AFTER healthcheck in the Node job — healthcheck's
+  iter-86 catalogCount check fails first if the cross-language template
+  count drifts; vertical-tour then verifies each template actually
+  scaffolds + validates.
+- **Wall-time impact on CI**: ~1.1s per matrix cell. Total budget
+  unchanged because the existing Node job was already 30-40s of
+  install + build + tests; the tour is rounding-error.
+- **Catches a new failure class**: a template that registers in
+  TEMPLATES + catalog.json correctly (passing healthcheck.catalogCount)
+  but fails to actually scaffold or validate. Pre-iter-89 this would
+  only be caught if someone happened to run the demo locally; post-
+  iter-89 the same push fails CI.
+- **`__tests__/workflows.test.ts`** 9 → **10** cases (+1):
+  - "ci.yml runs vertical-tour as a per-push smoke gate (iter 89)" —
+    pins the `examples/vertical-tour/vertical-tour.mjs` invocation
+    exists AND comes after healthcheck in the source order.
+- TS suite: **584/584** (was 583).
+
 ### Added — Iter 88 (2026-06-14)
 
 - **`examples/vertical-tour/`** — analogue of iter-55's `host-tour/`:
