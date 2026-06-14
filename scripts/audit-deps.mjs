@@ -21,6 +21,8 @@
 //   node scripts/audit-deps.mjs --level=critical   # fail only on critical
 //   node scripts/audit-deps.mjs --include-dev      # audit dev deps too
 //   node scripts/audit-deps.mjs --skip-cargo       # skip cargo audit
+//   node scripts/audit-deps.mjs --scan=apps/web-ui # extra dir to audit
+//   node scripts/audit-deps.mjs --skip-extra       # skip auto-discovered
 //
 // Exit codes:
 //   0   no advisories at-or-above threshold
@@ -29,6 +31,8 @@
 
 import { execFile as execFileCb } from 'node:child_process';
 import { promisify } from 'node:util';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 const execFile = promisify(execFileCb);
 
@@ -37,7 +41,33 @@ const level = args.find(a => a.startsWith('--level='))?.slice('--level='.length)
 const includeDev = args.includes('--include-dev');
 const skipCargo = args.includes('--skip-cargo');
 const skipNpm = args.includes('--skip-npm');
+const skipExtra = args.includes('--skip-extra');
 const strictTooling = args.includes('--strict-tooling');
+
+// iter 61: --scan=<dir> (repeatable) audits package-lock.json trees that
+// sit OUTSIDE the root npm workspace. apps/web-ui (PR #1) is the canonical
+// example — its bundle ships to GitHub Pages, so its deps are part of the
+// production attack surface even though they aren't in the CLI workspace.
+const explicitScans = args
+  .filter(a => a.startsWith('--scan='))
+  .map(a => a.slice('--scan='.length));
+
+/**
+ * Auto-discover known-but-non-workspace package trees. Today: apps/web-ui.
+ * Anything added here MUST have an in-repo package-lock.json so the audit
+ * doesn't trigger an npm install at scan time (which would be expensive
+ * and could even change the lockfile).
+ */
+function discoverExtraScans() {
+  if (skipExtra) return [];
+  const known = ['apps/web-ui'];
+  return known.filter(d => existsSync(resolve(d, 'package-lock.json')));
+}
+
+const extraScanDirs = [
+  ...explicitScans,
+  ...discoverExtraScans().filter(d => !explicitScans.includes(d)),
+];
 
 const LEVELS = ['info', 'low', 'moderate', 'high', 'critical'];
 const levelIdx = LEVELS.indexOf(level);
@@ -68,12 +98,12 @@ function cargoInvocation() {
     : { bin: 'cargo', args };
 }
 
-async function runNpmAudit() {
+async function runNpmAudit(cwd) {
   if (skipNpm) return { tag: 'SKIP', msg: 'skipped (--skip-npm)', exit: 0 };
   const { bin, args } = npmInvocation();
   let stdout = '', exitCode = 0;
   try {
-    const r = await execFile(bin, args, { maxBuffer: 1024 * 1024 * 16, windowsHide: true });
+    const r = await execFile(bin, args, { maxBuffer: 1024 * 1024 * 16, windowsHide: true, cwd });
     stdout = r.stdout;
   } catch (e) {
     stdout = e.stdout || ''; exitCode = e.code ?? 1;
@@ -143,9 +173,17 @@ async function runCargoAudit() {
 }
 
 async function main() {
-  log('INFO', `level=${level} include-dev=${includeDev} skip-cargo=${skipCargo} skip-npm=${skipNpm}`);
+  log('INFO', `level=${level} include-dev=${includeDev} skip-cargo=${skipCargo} skip-npm=${skipNpm} extra-scans=${extraScanDirs.length ? extraScanDirs.join(',') : 'none'}`);
   const results = [];
-  results.push({ tool: 'npm', ...(await runNpmAudit()) });
+  results.push({ tool: 'npm(workspace)', ...(await runNpmAudit(process.cwd())) });
+  for (const dir of extraScanDirs) {
+    const abs = resolve(dir);
+    if (!existsSync(resolve(abs, 'package-lock.json'))) {
+      results.push({ tool: `npm(${dir})`, tag: 'SKIP', msg: `no package-lock.json in ${dir}` });
+      continue;
+    }
+    results.push({ tool: `npm(${dir})`, ...(await runNpmAudit(abs)) });
+  }
   results.push({ tool: 'cargo', ...(await runCargoAudit()) });
 
   let problems = 0;

@@ -4,6 +4,31 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Added — Iter 61 (2026-06-14)
+
+- **`scripts/audit-deps.mjs` now scans `apps/web-ui/`** — closes a real
+  security gap. PR #1 put the web-UI Studio in `apps/web-ui/` outside
+  the npm workspace (per ADR-027) so its own `package-lock.json` was
+  **NOT** audited by the iter-38 aggregate gate — even though the
+  built bundle is what ships to GitHub Pages (the production attack
+  surface).
+- **New flags**:
+  - `--scan=<dir>` (repeatable) — audit an additional package tree
+  - `--skip-extra` — disable auto-discovery
+- **Auto-discovery**: any known-non-workspace tree with a real
+  `package-lock.json` (today: just `apps/web-ui`) is scanned
+  automatically. Adding more requires editing the `known` list in
+  `discoverExtraScans()` — deliberate, not by env probing.
+- Verified locally: 0 advisories at high+ across npm-workspace +
+  apps/web-ui + cargo.
+- **`__tests__/audit-deps.test.ts`** grew 7 → 12 cases (5 new):
+  - auto-discovers apps/web-ui as an extra scan target
+  - --skip-extra disables auto-discovery
+  - --scan=<dir> is recognized + reported in INFO
+  - unknown --scan=<dir> produces SKIP, not a crash
+  - real npm audit covers apps/web-ui (0 advisories at high+)
+- TS suite: **529/529** (up from 524).
+
 ### Fixed — Iter 60 (2026-06-14)
 
 - **`ruvllmSemantic()` now memoised by input** — closes a pre-existing
