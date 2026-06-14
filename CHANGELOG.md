@@ -4,6 +4,28 @@ All notable changes to this project are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Fixed — Iter 63 (2026-06-14)
+
+- **`@ruflo/vertical-base` now ships a README** — caught by running
+  `node scripts/preflight.mjs` end-to-end for the first time on the
+  road-to-v0.1.0 push. The iter-25 `pack-contents` invariants test
+  pinned README+LICENSE for the 6 host adapters but only `dist/` for
+  vertical packs, so the gap landed silently. Writing the missing
+  `packages/vertical-base/README.md` (authoring guide for vertical-pack
+  authors, anchored on ADR-013) closes it.
+- **`__tests__/pack-contents.test.ts` tightened** — the
+  `vertical packs ship dist/` case now also asserts each pack ships
+  `README` and `LICENSE`. Suite **530/530** (was 529; 6/6 in
+  pack-contents.test.ts, was 6/6 with weaker assertions).
+- **Publish readiness — preflight gate status as of `fdcccd5`**:
+  - PASS: git on main, semver consistency, every package has README,
+    publishConfig.access=public, CHANGELOG mentions current iter,
+    LICENSE is MIT, cargo fmt
+  - FAIL (local env, NOT publish-blocking):
+    `wasm size budget` — wasm-pack not installed on dev workstation;
+    CI matrix builds + size-checks wasm correctly on every push.
+  All real publish gates pass.
+
 ### Changed — Iter 62 (2026-06-14)
 
 - **README.md rewritten end-user-first** — the previous version led with

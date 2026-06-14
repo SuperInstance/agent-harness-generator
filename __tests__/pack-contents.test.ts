@@ -92,7 +92,7 @@ describe('npm pack content invariants', () => {
     expect(fileExistsInPack(packed, 'dist/harness-bin.js'), 'missing dist/harness-bin.js (harness binary)').toBe(true);
   }, 30_000);
 
-  it('vertical packs ship dist/ + manifest.json', async () => {
+  it('vertical packs ship dist/ + manifest.json + README + LICENSE', async () => {
     const verticals = ['vertical-base', 'vertical-trading'];
     for (const v of verticals) {
       const dir = join(PACKAGES_DIR, v);
@@ -101,6 +101,11 @@ describe('npm pack content invariants', () => {
       expect(packed, `${v} pack failed`).not.toBeNull();
       expect(packed!.name).toBe(`@ruflo/${v}`);
       expect(fileExistsInPack(packed, 'dist/'), `${v} missing dist/`).toBe(true);
+      // iter 63: preflight failed because @ruflo/vertical-base shipped without
+      // a README. Pin this invariant so the publish gate catches it before
+      // we hit the actual `npm publish` call.
+      expect(fileExistsInPack(packed, 'README'), `${v} missing README`).toBe(true);
+      expect(fileExistsInPack(packed, 'LICENSE'), `${v} missing LICENSE`).toBe(true);
     }
   }, 60_000);
 
