@@ -1,15 +1,20 @@
 import { useState } from 'react';
 import { Github, Loader2, Sparkles, Wand2 } from 'lucide-react';
 import {
+  ARCHETYPES,
   HIGH_SIGNAL_FILES,
   analyzeFiles,
+  hasWebGPU,
   parseGitHubUrl,
   planToConfig,
   recommendPlan,
   scoreArchetypes,
+  semanticScores,
 } from '../generator';
-import type { HarnessConfig, HarnessPlan, RepoInput, ScoredArchetype } from '../generator';
-import { Field, Section } from './ui';
+import type { HarnessConfig, HarnessPlan, RepoInput, RepoProfile, ScoredArchetype } from '../generator';
+import { Field, Section, SegTabs } from './ui';
+
+type Engine = 'lexical' | 'minilm';
 
 /** Fetch the high-signal files from a public repo via the GitHub contents API. */
 async function fetchRepoFiles(owner: string, repo: string, token?: string): Promise<Record<string, string>> {
@@ -39,14 +44,38 @@ async function fetchRepoFiles(owner: string, repo: string, token?: string): Prom
 export function RepoImporter({ onUse }: { onUse: (cfg: HarnessConfig) => void }) {
   const [url, setUrl] = useState('https://github.com/ruvnet/ruflo');
   const [token, setToken] = useState('');
+  const [engine, setEngine] = useState<Engine>('lexical');
   const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [plan, setPlan] = useState<HarnessPlan | null>(null);
   const [ranked, setRanked] = useState<ScoredArchetype[]>([]);
+  const [engineUsed, setEngineUsed] = useState<Engine>('lexical');
+
+  /** Optionally embed with MiniLM; falls back to lexical on any failure. */
+  async function semanticFor(profile: RepoProfile): Promise<Record<string, number> | undefined> {
+    if (engine !== 'minilm') return undefined;
+    const backend = hasWebGPU() ? 'webgpu' : 'wasm';
+    setStatus(`Loading MiniLM (${backend})…`);
+    try {
+      const scores = await semanticScores(profile, ARCHETYPES, {
+        backend,
+        onProgress: (p) => p.status && setStatus(`MiniLM: ${p.status}${p.progress ? ` ${Math.round(p.progress)}%` : ''}`),
+      });
+      setEngineUsed('minilm');
+      setStatus(`Embedded with MiniLM (${backend}).`);
+      return scores;
+    } catch {
+      setEngineUsed('lexical');
+      setStatus('MiniLM unavailable — used lexical scoring.');
+      return undefined;
+    }
+  }
 
   async function analyze() {
     setError(null);
     setPlan(null);
+    setStatus(null);
     const parsed = parseGitHubUrl(url);
     if (!parsed) {
       setError('Not a GitHub URL — expected https://github.com/<owner>/<repo>');
@@ -61,8 +90,10 @@ export function RepoImporter({ onUse }: { onUse: (cfg: HarnessConfig) => void })
       }
       const input: RepoInput = { owner: parsed.owner, repo: parsed.repo, files };
       const profile = analyzeFiles(input);
-      setRanked(scoreArchetypes(profile));
-      setPlan(recommendPlan(profile));
+      const semantic = await semanticFor(profile);
+      if (!semantic) setEngineUsed('lexical');
+      setRanked(scoreArchetypes(profile, semantic));
+      setPlan(recommendPlan(profile, semantic));
     } catch {
       setError('Analysis failed — check the URL or paste a token for rate limits.');
     } finally {
@@ -96,10 +127,31 @@ export function RepoImporter({ onUse }: { onUse: (cfg: HarnessConfig) => void })
                 placeholder="ghp_…"
               />
             </Field>
-            <button data-testid="analyze-repo" className="btn btn-primary" onClick={analyze} disabled={busy}>
-              {busy ? <Loader2 size={16} className="animate-spin" /> : <Wand2 size={16} />}
-              Analyze → recommend
-            </button>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <span className="field-label">Semantic engine</span>
+                <SegTabs<Engine>
+                  value={engine}
+                  onChange={setEngine}
+                  options={[
+                    { id: 'lexical', label: 'Lexical' },
+                    { id: 'minilm', label: 'MiniLM (WASM/WebGPU)' },
+                  ]}
+                />
+              </div>
+              <button data-testid="analyze-repo" className="btn btn-primary" onClick={analyze} disabled={busy}>
+                {busy ? <Loader2 size={16} className="animate-spin" /> : <Wand2 size={16} />}
+                Analyze → recommend
+              </button>
+            </div>
+            {engine === 'minilm' && (
+              <p className="text-xs text-slate-500">
+                Downloads <code className="text-slate-300">Xenova/all-MiniLM-L6-v2</code> (~25 MB, cached) and embeds in your
+                browser — {hasWebGPU() ? 'WebGPU' : 'WASM'} backend. Scores are rounded for determinism; generation stays
+                rule-based. Falls back to lexical if it can't load.
+              </p>
+            )}
+            {status && <div className="rounded-lg border border-ink-700 bg-ink-900/60 px-3 py-2 text-xs text-slate-300">{status}</div>}
             {error && <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">{error}</div>}
           </div>
         </Section>
@@ -137,6 +189,9 @@ export function RepoImporter({ onUse }: { onUse: (cfg: HarnessConfig) => void })
                 </div>
                 <div className="mt-1 text-xs text-slate-400">
                   Hosts: {plan.hosts.join(', ')} · MCP: {plan.mcp} · Risk: {plan.riskProfile}
+                </div>
+                <div className="mt-1 text-[11px] text-slate-500">
+                  scored by {engineUsed === 'minilm' ? 'MiniLM embeddings' : 'lexical overlap'} · embeddings recommend, rules generate
                 </div>
               </div>
 

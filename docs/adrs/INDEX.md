@@ -58,6 +58,7 @@ ADR-006 (memory + learning) and ADR-008 (drift detection) cut across all phases.
 | [ADR-022](./ADR-022-mcp-primitive.md) | MCP as a modular, gated, security-first primitive | Accepted | MCP is one selectable primitive (off/local/remote), default-deny. Emits gated `src/mcp/*` + scannable `mcp-policy.json`; `harness mcp-scan` is "npm audit for agent tools"; policy is witness-bound. |
 | [ADR-023](./ADR-023-repo-to-harness-importer.md) | Repo → Harness importer | Accepted | Paste a GitHub URL → deterministic file inventory + archetype scoring → editable harness plan. Embeddings recommend, rules generate, tests prove parity; no repo code executed. |
 | [ADR-024](./ADR-024-studio-and-verify.md) | Agent Harness Studio + in-browser Verify | Accepted | Four-tab Studio (Repo→Harness / Create harness / Skill·Agent·Command / Verify). `verifyFileMap` validates a dropped zip in-browser — structure + MCP policy + secrets — no upload. |
+| [ADR-025](./ADR-025-browser-embeddings-minilm.md) | Browser embeddings (Transformers.js MiniLM) | Accepted | Implements the ADR-023 `semantic` term with optional, lazy, WebGPU/WASM MiniLM (`all-MiniLM-L6-v2`). Injected into the rule-based scorer; rounded for determinism; lexical fallback stays the default so the deploy needs no model. |
 
 ## Conventions used across the series
 

@@ -10,7 +10,7 @@ A **100% client-side** Studio for the agent-harness supply chain: turn any GitHu
 
 | Tab | What you get |
 |---|---|
-| **Repo → Harness** | Paste a GitHub URL → deterministic analysis (languages, build/test commands, MCP/host/CI signals) → archetype scoring → an editable harness plan with a confidence panel. No repo code executed; suggested commands are `trust: inferred · execution: disabled`. |
+| **Repo → Harness** | Paste a GitHub URL → deterministic analysis (languages, build/test commands, MCP/host/CI signals) → archetype scoring → an editable harness plan with a confidence panel. No repo code executed; suggested commands are `trust: inferred · execution: disabled`. Semantic engine: **Lexical** (default) or optional **MiniLM** embeddings (Transformers.js, WebGPU/WASM, lazy-loaded, lexical fallback). |
 | **Create harness** | 16 quick-start verticals, composable agents/skills/commands, kernel options, and the **Primitives** panel (CLI · MCP · memory · learning · witness · release gates). Live file tree + `<name>.zip`. |
 | **Skill / Agent / Command** | Author or pick a single Claude artifact → drop-in `SKILL.md` folder (YAML frontmatter). |
 | **Verify** | Drop a generated `.zip` → unzipped + checked in-browser (structure, kernel dep, host wiring, unresolved vars, MCP policy, secrets). |

@@ -100,6 +100,15 @@ test.describe('Agent Harness Generator UI', () => {
     await expect(page.getByText(/Not a GitHub URL/i)).toBeVisible();
   });
 
+  test('Repo → Harness: MiniLM engine toggle shows the model note (no download until Analyze)', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Repo → Harness' }).click();
+    // Default is Lexical; selecting MiniLM reveals the model/back-end note.
+    await page.getByRole('button', { name: /MiniLM/ }).click();
+    await expect(page.getByText(/Xenova\/all-MiniLM-L6-v2/)).toBeVisible();
+    await expect(page.getByText(/Falls back to lexical/i)).toBeVisible();
+  });
+
   test('Verify tab renders the dropzone and checklist', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Verify', exact: true }).click();

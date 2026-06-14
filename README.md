@@ -47,7 +47,7 @@ A **100% client-side** Studio (in the spirit of ruflo's [goal UI](https://goal.r
 
 | Tab | What it does |
 |---|---|
-| **Repo → Harness** | Paste a GitHub URL → deterministic repo analysis → archetype scoring → an **editable harness plan** (agents, skills, commands, MCP mode, risk policy, confidence). No repo code is ever executed. |
+| **Repo → Harness** | Paste a GitHub URL → deterministic repo analysis → archetype scoring → an **editable harness plan** (agents, skills, commands, MCP mode, risk policy, confidence). No repo code is ever executed. Semantic engine: **Lexical** (default, deterministic) or optional in-browser **MiniLM** embeddings (Transformers.js, WebGPU/WASM). |
 | **Create harness** | Branded-runtime builder: 16 quick-start verticals, composable agents/skills/commands, kernel options, and the **Primitives** panel (CLI · MCP · memory · learning · witness · release gates). Live file tree + `<name>.zip`, byte-compatible with `create-agent-harness`. |
 | **Skill / Agent / Command** | Author or pick a single artifact → a Claude-ready `SKILL.md` folder (YAML frontmatter) you drop straight into **Claude desktop** or **claude.ai**. |
 | **Verify** | Drop a generated `.zip` → unzipped and **checked in-browser** (structure · kernel dep · host wiring · unresolved vars · MCP policy · secrets). Nothing uploaded. |
@@ -79,7 +79,7 @@ npm run e2e      # Playwright desktop + mobile (zero console errors)
 npm run bench    # generator hot-path micro-bench (sub-100µs/op)
 ```
 
-Source + rationale: [`apps/web-ui/`](apps/web-ui/) · ADRs [020](docs/adrs/ADR-020-web-generator-ui.md) · [021](docs/adrs/ADR-021-client-side-packaging-and-pages-deploy.md) · [022](docs/adrs/ADR-022-mcp-primitive.md) · [023](docs/adrs/ADR-023-repo-to-harness-importer.md) · [024](docs/adrs/ADR-024-studio-and-verify.md).
+Source + rationale: [`apps/web-ui/`](apps/web-ui/) · ADRs [020](docs/adrs/ADR-020-web-generator-ui.md) · [021](docs/adrs/ADR-021-client-side-packaging-and-pages-deploy.md) · [022](docs/adrs/ADR-022-mcp-primitive.md) · [023](docs/adrs/ADR-023-repo-to-harness-importer.md) · [024](docs/adrs/ADR-024-studio-and-verify.md) · [025](docs/adrs/ADR-025-browser-embeddings-minilm.md).
 
 ---
 

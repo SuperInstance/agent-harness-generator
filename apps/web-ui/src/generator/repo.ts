@@ -282,12 +282,19 @@ function overlap(tokens: string[], keywords: string[]): number {
   return hits / keywords.length;
 }
 
-/** Score every archetype with the auditable weighted formula. Deterministic. */
-export function scoreArchetypes(profile: RepoProfile): ScoredArchetype[] {
+/**
+ * Score every archetype with the auditable weighted formula. Deterministic.
+ *
+ * `semantic` lets an embedding pass (Transformers.js MiniLM, embeddings.ts)
+ * supply the semantic term as a per-archetype map. When omitted, a transparent
+ * lexical keyword-overlap proxy is used — the deterministic default that needs
+ * no model download. Either way generation stays rule-based.
+ */
+export function scoreArchetypes(profile: RepoProfile, semanticScores?: Record<string, number>): ScoredArchetype[] {
   const manifestText = profile.tokens.join(' ');
   const scored = ARCHETYPES.map((a) => {
     const eligible = a.requiredSignals.every((s) => signalPresent(profile, s));
-    const semantic = overlap(profile.tokens, a.keywords);
+    const semantic = semanticScores ? (semanticScores[a.id] ?? 0) : overlap(profile.tokens, a.keywords);
     const manifest = a.manifestHints.length
       ? a.manifestHints.filter((h) => manifestText.includes(h.toLowerCase())).length / a.manifestHints.length
       : 0;
@@ -304,8 +311,8 @@ export function scoreArchetypes(profile: RepoProfile): ScoredArchetype[] {
 
 // --- recommendation (pure) -------------------------------------------------
 
-export function recommendPlan(profile: RepoProfile): HarnessPlan {
-  const ranked = scoreArchetypes(profile);
+export function recommendPlan(profile: RepoProfile, semanticScores?: Record<string, number>): HarnessPlan {
+  const ranked = scoreArchetypes(profile, semanticScores);
   const top = ranked[0]!;
   const a = top.archetype;
 
