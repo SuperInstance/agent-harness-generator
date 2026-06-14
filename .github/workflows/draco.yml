@@ -21,6 +21,7 @@ on:
     paths:
       - 'packages/bench/**'
       - 'scripts/bench-baseline.mjs'
+      - 'scripts/build-ordered.mjs'
       - '.github/workflows/draco.yml'
   pull_request:
     paths:
