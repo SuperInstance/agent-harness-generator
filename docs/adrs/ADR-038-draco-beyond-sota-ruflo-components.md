@@ -117,6 +117,32 @@ selection (generate N intact vanilla dossiers, pick the highest judged — never
 transforms a dossier, so grounding cannot be lost; can only match or exceed the
 single draw).
 
+#### Arm 2 — self-consistency best-of-3 selection: FIRST NON-LOSS (tie, no margin)
+
+| arm | vanilla | best-of-3 | delta | grounding | coverage | balance | faithful | result |
+|-----|---------|-----------|-------|-----------|----------|---------|----------|--------|
+| frontier n=20 | 0.7189 | 0.7196 | **+0.0007** | -0.02 | **+0.05** | -0.05 | +0.02 | TIE |
+
+First arm not to lose — SELECTION (vs transformation) is the right family. But
++0.0007 is within noise, NOT the margin the directive requires. The lesson is in
+the per-dimension split: the diverse-angle candidates genuinely raised COVERAGE
+(+0.05), but the HOLISTIC judge selector traded away BALANCE (-0.05), netting a
+wash. Selection histogram [4,11,5]: emphasised angles win 16/20, so the candidate
+set is real — the bottleneck is the SELECTION SIGNAL, mis-aligned with the DRACO
+composite scorer.
+
+**Arm 3 — composite per-dimension selection:** have the judge rate each candidate
+on the SAME dimensions the scorer uses (grounding, coverage, balance, faithfulness)
+and select on the equal-weight SUM, so selection optimises what is actually scored
+rather than a single holistic guess. Hypothesis: keep the coverage gain without
+the balance leak → turn the tie into a margin.
+
+**Emerging honest conclusion (provisional):** a single well-prompted frontier call
+is at or near the DRACO ceiling — structure hurts (-0.10), refinement hurts
+(-0.03), selection ties (+0.001). If composite selection also only ties, the robust
+result worth shipping is the benchmark's own verdict: deep-research *structure* does
+not beat a strong direct call on cross-domain factual dossiers under this scorer.
+
 ### What the baseline tells us (the real target)
 
 The harness loses to vanilla at BOTH tiers, and at frontier the gap is large

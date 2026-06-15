@@ -1,0 +1,48 @@
+{
+  "corpusVersion": 1,
+  "transport": "live",
+  "judged": true,
+  "judge": {
+    "model": "google/gemini-2.5-pro",
+    "promptVersion": 1
+  },
+  "candidates": 3,
+  "vanilla": {
+    "arm": "single",
+    "score": 0.7189069402819402,
+    "perDimension": {
+      "grounding": 0.5482847014097014,
+      "coverage": 0.52,
+      "balance": 0.9,
+      "cleanliness": 1,
+      "faithfulness": 0.6262499999999999
+    },
+    "totalTokens": 28018
+  },
+  "selfConsistency": {
+    "arm": "fusion",
+    "score": 0.7195692735397594,
+    "perDimension": {
+      "grounding": 0.5306463676987974,
+      "coverage": 0.5700000000000001,
+      "balance": 0.85,
+      "cleanliness": 1,
+      "faithfulness": 0.6472000000000001
+    },
+    "totalTokens": 329799
+  },
+  "delta": 0.0006623332578191699,
+  "deltaByDimension": {
+    "grounding": -0.017638333710904064,
+    "coverage": 0.050000000000000044,
+    "balance": -0.050000000000000044,
+    "cleanliness": 0,
+    "faithfulness": 0.020950000000000246
+  },
+  "selfConsistencyWins": true,
+  "selectionHistogram": [
+    4,
+    11,
+    5
+  ]
+}
