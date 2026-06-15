@@ -1,3 +1,17 @@
+<p align="center">
+  <a href="https://github.com/SuperInstance/agent-harness-generator">
+    <img src="https://img.shields.io/badge/SuperInstance-Fleet%20Ready-ff6b6b?style=flat-square" alt="SuperInstance Fleet Ready"/>
+  </a>
+  <a href="SUPERINSTANCE_INTEGRATION.md">
+    <img src="https://img.shields.io/badge/Fleet-Protocol-4ecdc4?style=flat-square" alt="Fleet Protocol"/>
+  </a>
+</p>
+
+> **SuperInstance Fork** — Every generated harness is fleet-aware out of the box.
+> [Read the integration plan →](SUPERINSTANCE_INTEGRATION.md)
+
+---
+
 <div align="center">
 
 # MetaHarness
