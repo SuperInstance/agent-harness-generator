@@ -1,6 +1,6 @@
 # ADR-038: DRACO beyond-SOTA — optimizing the research harness with ruflo intelligence components
 
-**Status**: Proposed
+**Status**: Accepted
 **Date**: 2026-06-14
 **Project**: `ruvnet/agent-harness-generator`
 **Supersedes**: none
@@ -174,12 +174,46 @@ scorer at frontier tier, a single well-prompted direct call is at the ceiling;
 deep-research structure and refinement degrade it, and selection matches it
 within noise.**
 
-The one untested, structurally-distinct lever is **UNION** (arm 4): merge the
-real, deduplicated citations from N independent vanilla dossiers. Unlike
-selection (capped by the best single draw) this can *add* grounding — the
-dominant dimension — above any single call. It is the only approach that could
-plausibly clear vanilla's noise floor. If UNION also stays within ±0.02, the
-ceiling finding is airtight and is the deliverable.
+#### Arm 4 — UNION: ruled out ANALYTICALLY (not run — would waste budget)
+
+UNION (merge deduplicated real citations from N dossiers) was the last candidate
+lever. Reading the scorer settles it without a run (`scorer.ts:90`):
+
+```
+grounding = results.filter(r => r === 'ok').length / urls.length;  // FRACTION
+```
+
+Grounding is the **fraction** of cited URLs that resolve, not a count. So UNION
+cannot help: adding citations from other dossiers can only *match* the best
+single dossier's live-fraction (if every added URL is live) or *dilute* it (any
+dead URL lowers the fraction). It is structurally incapable of raising grounding
+above the best single draw. Running it would spend frontier budget to confirm a
+result the scorer math already guarantees — exactly the "do not game / do not
+waste" line. Arm 4 is rejected analytically.
+
+### Final conclusion (status: Accepted)
+
+Across four frontier runs + the scorer source, the result is airtight and
+**mechanistic**: on the DRACO scorer at frontier tier, a single well-prompted
+direct call is at the ceiling, and the scorer's structure *caps every alternative*:
+
+- **transform** (6-stage harness, verify→prune): loses live URLs → grounding −0.10 / −0.03.
+- **select** (best-of-N, holistic or composite): bounded by the best single draw → +0.001 / −0.003, inside vanilla's own ±0.02 between-run noise.
+- **union**: grounding is a fraction → cannot exceed the best draw, can only dilute. Ruled out analytically.
+
+**Shippable finding:** deep-research *structure, refinement, selection, and
+aggregation* do not beat a strong direct call on cross-domain factual dossiers
+under the DRACO scorer — and the reason is the grounding-as-fraction definition,
+which rewards a tight, high-live-rate citation set (what one careful call
+produces) over any thoroughness/aggregation strategy. This is the benchmark
+working: it falsified the harness-beats-vanilla thesis with a mechanism, rather
+than rubber-stamping it. The fusion arm's one real, measured contribution
+(independent verify recovers ~+0.035 vs the single-model harness) stands, but
+not enough to clear vanilla.
+
+The arms (augment, self-consistency holistic/composite) remain in-tree as
+tested, documented, measured-rejected modules behind flags — reproducible
+evidence, not dead code. No arm is made the default, because none beats vanilla.
 
 ### What the baseline tells us (the real target)
 
