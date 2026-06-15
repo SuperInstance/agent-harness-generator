@@ -389,9 +389,13 @@ export const adapter: HostAdapter = {
       ...fleetProtocolFiles(spec),
     };
 
-    // When --with-fleet is active, inject additional fleet agents and
-    // MCP servers into the generated config.
-    if (spec.withFleet) {
+    // Fleet — when the spec carries a `withFleet` flag (set by the CLI
+    // scaffold when --with-fleet is passed), inject additional fleet MCP
+    // servers and the fleet-coordinator agent into the generated config.
+    // The flag is not part of HarnessSpec's type definition; it is passed
+    // as a dynamic extension via the spec object.
+    const withFleet = (spec as unknown as Record<string, unknown>).withFleet === true;
+    if (withFleet) {
       // Generate openclaw.json with fleet MCP servers
       const fleetMcp: Record<string, OpenClawMcpServerEntry> = {
         'fleet-registration': { command: 'node', args: ['scripts/fleet-scout.sh', 'register'] },

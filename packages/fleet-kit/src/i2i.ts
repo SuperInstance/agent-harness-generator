@@ -29,7 +29,8 @@ export class I2IClient {
   private vesselPath: string;
 
   constructor(options: I2IClientOptions = {}) {
-    this.harborUrl = options.harborUrl ?? 'http://localhost:8797';
+    this.harborUrl = options.harborUrl
+      ?? (process.env.FLEET_EDGE_HARBOR || 'http://localhost:8797');
     this.vesselPath = options.vesselPath ?? path.join(process.cwd(), 'i2i-vessel');
   }
 
