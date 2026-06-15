@@ -1,0 +1,66 @@
+{
+  "name": "@superinstance/fleet-kit",
+  "version": "0.1.0",
+  "description": "SuperInstance fleet protocol SDK — A2A, I2I, GC reporting, fleet registry, pulse metrics for agent-harness-generator harnesses",
+  "homepage": "https://github.com/SuperInstance/agent-harness-generator",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SuperInstance/agent-harness-generator.git",
+    "directory": "packages/fleet-kit"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./a2a": {
+      "types": "./dist/a2a.d.ts",
+      "import": "./dist/a2a.js"
+    },
+    "./i2i": {
+      "types": "./dist/i2i.d.ts",
+      "import": "./dist/i2i.js"
+    },
+    "./gc": {
+      "types": "./dist/gc.d.ts",
+      "import": "./dist/gc.js"
+    },
+    "./registry": {
+      "types": "./dist/registry.d.ts",
+      "import": "./dist/registry.js"
+    },
+    "./pulse": {
+      "types": "./dist/pulse.d.ts",
+      "import": "./dist/pulse.js"
+    }
+  },
+  "files": ["dist/**", "README.md"],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run --passWithNoTests",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "superinstance",
+    "fleet",
+    "a2a",
+    "i2i",
+    "agent-harness",
+    "gc"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

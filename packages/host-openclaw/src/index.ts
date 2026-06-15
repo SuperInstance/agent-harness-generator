@@ -1,36 +1,22 @@
 // SPDX-License-Identifier: MIT
 //
-// @metaharness/host-openclaw — OpenClaw host adapter.
+// @metaharness/host-openclaw — OpenClaw host adapter (SuperInstance fork)
 //
-// OpenClaw is a "Personal AI Assistant" CLI agent gateway — local-first,
-// multi-platform (WhatsApp/Telegram/Slack/Discord), MCP-supported.
+// Enhanced with fleet protocol support: AGENTS.md, .gcconfig, fleet-scout.sh
+// Every generated harness becomes a fleet-aware participant.
 //
-// Verified integration surface (from research):
-//   - Install:  `npm install -g openclaw@latest`
-//               `openclaw onboard --install-daemon`
-//   - Config:   `~/.openclaw/openclaw.json`  (JSON, not TOML)
-//   - Skills:   `~/.openclaw/workspace/skills/<skill>/SKILL.md`
-//               with YAML frontmatter
-//   - Tools:    "First-class tools" — browser, canvas, nodes, cron,
-//               sessions; MCP servers register as "external tools"
-//   - Quickstart: `openclaw gateway --port 18789 --verbose`
-//                 `openclaw agent --message "..." --thinking high`
-//   - Node:     >= 22.19 / 24
-//   - License:  MIT
-//
-// This adapter emits the per-harness files OpenClaw needs:
-//   - `openclaw.json` config snippet (user merges into their main file)
-//   - `SKILL.md` file per kernel skill (placed in the workspace skill dir)
-//   - `install-openclaw.sh` runbook script
+// SuperInstance fleet integration:
+//   - AGENTS.md — fleet constitution (what rules this harness follows)
+//   - .gcconfig — GC policy manifest for the generated harness
+//   - FLEET_PROTOCOL.md — how this harness participates in the fleet
+//   - i2i-vessel/ — local vessel directory structure
+//   - scripts/fleet-scout.sh — fleet monitoring script
+//   - scripts/gc-self-audit.sh — local GC reporting
 
 import type { HostAdapter, HarnessSpec, McpServerSpec } from '@metaharness/kernel';
 
 export const HOST_NAME = 'openclaw' as const;
 
-/**
- * The shape of an entry in `~/.openclaw/openclaw.json`'s mcp_servers map.
- * JSON — NOT TOML (Codex) and NOT YAML (Hermes).
- */
 export interface OpenClawMcpServerEntry {
   command?: string;
   args?: string[];
@@ -38,10 +24,6 @@ export interface OpenClawMcpServerEntry {
   env?: Record<string, string>;
 }
 
-/**
- * Convert a kernel McpServerSpec to OpenClaw's JSON entry shape.
- * Mirrors Claude Code's MCP entry shape since both speak JSON.
- */
 export function serverToOpenClaw(s: McpServerSpec): OpenClawMcpServerEntry {
   const entry: OpenClawMcpServerEntry = {};
   if (s.command && s.command.length > 0) {
@@ -56,11 +38,6 @@ export function serverToOpenClaw(s: McpServerSpec): OpenClawMcpServerEntry {
   return entry;
 }
 
-/**
- * Render the `openclaw.json` content with the harness's MCP servers
- * registered. OpenClaw's main config file lives at `~/.openclaw/openclaw.
- * json`; users merge this snippet into theirs.
- */
 export function configJson(spec: HarnessSpec): string {
   const mcpServers: Record<string, OpenClawMcpServerEntry> = {};
   for (const s of spec.mcpServers ?? []) {
@@ -69,21 +46,11 @@ export function configJson(spec: HarnessSpec): string {
   return JSON.stringify({ mcp_servers: mcpServers }, null, 2) + '\n';
 }
 
-/**
- * Render the SKILL.md content for the harness as an OpenClaw workspace
- * skill. OpenClaw skills follow the same YAML-frontmatter + markdown
- * convention as Claude Code skills.
- */
 export function skillMarkdown(spec: HarnessSpec): string {
   const lines: string[] = [];
   lines.push('---');
   lines.push(`name: ${spec.name}`);
   if (spec.description) {
-    // CodeQL js/incomplete-sanitization: escaping only `"` is incomplete —
-    // a backslash in the input mis-escapes, and a TRAILING backslash would
-    // escape our own closing quote and break the YAML document. Escape the
-    // backslash FIRST, then the quote, then flatten raw newlines (illegal in
-    // a single-line double-quoted YAML scalar) so no input can break out.
     const desc = spec.description
       .replace(/\\/g, '\\\\')
       .replace(/"/g, '\\"')
@@ -112,14 +79,238 @@ export function skillMarkdown(spec: HarnessSpec): string {
   return lines.join('\n');
 }
 
-/**
- * Render the install runbook. Users run this once after generating to
- * register the MCP servers + drop the skill in their workspace.
- */
+export function agentsMarkdown(spec: HarnessSpec): string {
+  const fleetRepo = 'https://github.com/SuperInstance/baton-system';
+  return [
+    '---',
+    'name: ' + spec.name,
+    'fleet: superinstance',
+    'tier: hot',
+    'version: 1',
+    '---',
+    '',
+    `# AGENTS.md — Fleet Constitution for ${spec.name}`,
+    '',
+    '> This harness is a fleet-aware participant in the SuperInstance fleet.',
+    '> Read this FIRST if you are an agent entering this repository.',
+    '',
+    '## Fleet Protocol',
+    '',
+    '- **Registry**: ' + fleetRepo,
+    '- **I2I Vessel**: `i2i-vessel/` — shared state via bottles',
+    '- **GC Config**: `.gcconfig` — GC policy manifest',
+    '- **Fleet Scout**: `scripts/fleet-scout.sh` — health reporting',
+    '',
+    '## Rules of Engagement',
+    '',
+    '1. **Report to fleet** on start: `scripts/fleet-scout.sh ping`',
+    '2. **Write bottles** for any state that should survive the session',
+    '3. **Respect `.gcconfig`** — do not write outside allowed paths',
+    '4. **Check AGENTS.md** in any cloned repo before editing',
+    '5. **Submit to GC** after any batch write: `scripts/gc-self-audit.sh`',
+    '',
+    '## Fleet Services',
+    '',
+    '| Service | Protocol | Default Port |',
+    '|---------|----------|-------------|',
+    '| Harbor (I2I) | TCP/HTTP | 8796/8797 |',
+    '| Conservation Meter | UDP | 8798 |',
+    '| Rotation Feed | UDP | 8799 |',
+    '| Headspace (Vector) | HTTP | 9090 |',
+    '| Colony API | HTTP | 8820 |',
+    '| Colony Market | HTTP | 8822 |',
+    '| Colony Games | HTTP | 8823 |',
+    '',
+    'See `FLEET_PROTOCOL.md` for detailed integration instructions.',
+    '',
+  ].join('\n');
+}
+
+export function fleetProtocolMarkdown(spec: HarnessSpec): string {
+  return [
+    `# Fleet Protocol for ${spec.name}`,
+    '',
+    'This document describes how this harness participates in the SuperInstance fleet.',
+    '',
+    '## I2I Vessel Protocol',
+    '',
+    'The `i2i-vessel/` directory provides shared state across sessions:',
+    '',
+    '```',
+    'i2i-vessel/',
+    '├── bottles/        # Bottles — timestamped, named state snapshots',
+    '│   └── *.bottle.md',
+    '├── SESSION-STATE.md # Cold-start bootstrap (last known state)',
+    '└── TASK/           # Incoming work items from fleet',
+    '```',
+    '',
+    '### Bottle Format',
+    '',
+    'Each bottle is a markdown file in `bottles/` with:',
+    '- **Title line**: `# Bottle: <name> — <timestamp>`',
+    '- **Body**: Free-form markdown, structured as needed',
+    '',
+    '### Harbor Integration',
+    '',
+    'If harbor-daemon is running on :8796/:8797, bottles can be:',
+    '- **Written** via POST to `http://localhost:8797/bottle`',
+    '- **Read** via GET from `http://localhost:8797/bottles`',
+    '- **Queried** via GET `http://localhost:8797/bottle/<name>`',
+    '',
+    '## GC Protocol',
+    '',
+    'The `.gcconfig` file defines GC policy. To submit a GC report:',
+    '',
+    '```bash',
+    'scripts/gc-self-audit.sh',
+    '```',
+    '',
+    'This reports disk/RAM/load to the fleet GC ledger and triggers',
+    'a cleanup pass if pressure exceeds the configured threshold.',
+    '',
+    '## Fleet Registration',
+    '',
+    'On first start, the harness should register with the fleet:',
+    '',
+    '```bash',
+    'scripts/fleet-scout.sh register',
+    '```',
+    '',
+    'Subsequently, on each start:',
+    '',
+    '```bash',
+    'scripts/fleet-scout.sh ping',
+    '```',
+    '',
+    '## Fleet Coordination',
+    '',
+    '- **Construct-coordination repo**: SuperInstance/construct-coordination',
+    '  - Fleet status reports go in `notes/{instance-name}/`',
+    '  - Cross-instance communication via repo issues and bottles',
+    '',
+    '- **Baton-system repo**: SuperInstance/baton-system',
+    '  - Fleet constitution (this file\'s source of truth)',
+    '  - Fleet tier structure: `tiers/hot/`, `tiers/warm/`, `tiers/cold/`',
+    '  - GC docs at `docs/GC_AGENTS.md` and `docs/gc-intelligent-README.md`',
+    '',
+  ].join('\n');
+}
+
+export function gcConfigToml(spec: HarnessSpec): string {
+  return [
+    `# .gcconfig — GC Policy for ${spec.name}`,
+    '# Generated by @metaharness/host-openclaw (SuperInstance fork)',
+    '',
+    '[gc]',
+    'tier = "hot"',
+    'setpoint = 20              # Target free space %',
+    'aggression_min = 0.5',
+    'aggression_max = 5.0',
+    'compost_ttl_hours = 72',
+    '',
+    '[paths]',
+    'immortal = ["AGENTS.md", "FLEET_PROTOCOL.md", ".gcconfig"]',
+    'protected = ["node_modules/", "dist/"]',
+    'evictable = ["logs/", "i2i-vessel/bottles/archive/", "tmp/"]',
+    '',
+    '[reporting]',
+    'harbor_url = "http://localhost:8797"',
+    'ledger_name = "gc-report"',
+    'auto_report = true',
+    '',
+  ].join('\n');
+}
+
+export function fleetScoutScript(spec: HarnessSpec): string {
+  return [
+    '#!/usr/bin/env bash',
+    `# fleet-scout.sh for ${spec.name}`,
+    '# Register, ping, or diagnose fleet connectivity.',
+    'set -euo pipefail',
+    '',
+    'NAME=' + spec.name,
+    'HARBOR="${HARBOR_URL:-http://localhost:8797}"',
+    'REGISTRY="${FLEET_REGISTRY:-http://localhost:18789}"  # OpenClaw gateway',
+    '',
+    'cmd="${1:-status}"',
+    '',
+    'case "$cmd" in',
+    '  register)',
+    '    echo "[fleet] Registering $NAME..."',
+    '    curl -s -X POST "$HARBOR/bottle" \\',
+    '      -H "Content-Type: text/markdown" \\',
+    `      -d "# Bottle: fleet-register-${spec.name}\n\n$(date -u +%Y-%m-%dT%H:%M:%SZ): $NAME registering with fleet"`,
+    '    echo ""',
+    '    echo "[fleet] Registered."',
+    '    ;;',
+    '',
+    '  ping)',
+    '    echo "[fleet] Ping from $NAME at $(date -u +%Y-%m-%dT%H:%M:%SZ)"',
+    '    curl -s -o /dev/null -w "%{http_code}" "$HARBOR/bottle" \\',
+    '      -X POST -H "Content-Type: text/markdown" \\',
+    `      -d "# Bottle: fleet-ping-${spec.name}\n\nheartbeat $(date -u +%s)" \\`,
+    '      2>/dev/null || echo "unreachable"',
+    '    echo ""',
+    '    ;;',
+    '',
+    '  status)',
+    '    echo "=== Fleet Status for $NAME ==="',
+    '    echo "Harbor: $HARBOR"',
+    '    echo "Registry: $REGISTRY"',
+    '    echo "Uptime: $(uptime -p)"',
+    '    echo "Disk: $(df -h / | tail -1 | awk \'{print $5, $4}\')"',
+    '    echo "Harness: $(pwd)"',
+    '    ;;',
+    '',
+    '  *)',
+    '    echo "Usage: $0 {register|ping|status}"',
+    '    exit 1',
+    '    ;;',
+    'esac',
+    '',
+  ].join('\n');
+}
+
+export function gcSelfAuditScript(spec: HarnessSpec): string {
+  return [
+    '#!/usr/bin/env bash',
+    `# gc-self-audit.sh for ${spec.name}`,
+    '# Reports disk/RAM/load to fleet GC ledger.',
+    'set -euo pipefail',
+    '',
+    'NAME=' + spec.name,
+    'HARBOR="${HARBOR_URL:-http://localhost:8797}"',
+    'HERE="$(cd "$(dirname "$0")/.." && pwd)"',
+    '',
+    '# Gather metrics',
+    'DISK_PCT=$(df / | tail -1 | awk \'{print $5}\' | tr -d %)',
+    'DISK_FREE=$(df / | tail -1 | awk \'{print $4}\')',
+    'MEM_USED=$(free | awk \'/Mem:/ {printf "%.0f", $3/$2 * 100}\')',
+    'LOAD=$(uptime | awk -F\'load average:\' \'{print $2}\' | cut -d, -f1 | tr -d " ")',
+    '',
+    'TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)',
+    '',
+    'cat <<BOTTLE | curl -s -X POST "$HARBOR/bottle" -H "Content-Type: text/markdown" --data-binary @- >/dev/null',
+    `# Bottle: gc-audit-${spec.name} — ${TIMESTAMP}`,
+    '',
+    '- **instance**: ' + spec.name,
+    '- **timestamp**: ${TIMESTAMP}',
+    '- **disk_pct**: ${DISK_PCT}',
+    '- **disk_free**: ${DISK_FREE}',
+    '- **mem_pct**: ${MEM_USED}',
+    '- **load**: ${LOAD}',
+    '- **pwd**: ${HERE}',
+    'BOTTLE',
+    '',
+    'echo "[gc-audit] Reported at ${TIMESTAMP}: disk=${DISK_PCT}% free=${DISK_FREE} mem=${MEM_USED}% load=${LOAD}"',
+    '',
+  ].join('\n');
+}
+
 export function installScript(spec: HarnessSpec): string {
   const lines: string[] = [];
   lines.push('#!/usr/bin/env bash');
-  lines.push('# OpenClaw install runbook for harness: ' + spec.name);
+  lines.push(`# OpenClaw + Fleet install runbook for ${spec.name}`);
   lines.push('set -euo pipefail');
   lines.push('');
   lines.push('# 1. Install OpenClaw if missing');
@@ -129,16 +320,38 @@ export function installScript(spec: HarnessSpec): string {
   lines.push('openclaw onboard --install-daemon || true');
   lines.push('');
   lines.push('# 3. Merge MCP servers into ~/.openclaw/openclaw.json');
-  lines.push('#    Edit the file by hand or use `jq` to merge the snippet shipped at');
-  lines.push('#    ./openclaw.json into ~/.openclaw/openclaw.json under "mcp_servers".');
-  lines.push('echo "Merge openclaw.json into ~/.openclaw/openclaw.json (manual step)."');
+  lines.push('echo "---"');
+  lines.push('echo "Step: Merge openclaw.json into ~/.openclaw/openclaw.json under mcp_servers."');
+  lines.push('echo "---"');
   lines.push('');
   lines.push('# 4. Drop the skill into the workspace');
   lines.push(`mkdir -p "$HOME/.openclaw/workspace/skills/${spec.name}"`);
   lines.push(`cp ./SKILL.md "$HOME/.openclaw/workspace/skills/${spec.name}/SKILL.md"`);
   lines.push('');
-  lines.push('echo "Done. Try: openclaw agent --message \\"' + spec.name + ': ping\\""');
+  lines.push('# 5. Set up fleet protocol');
+  lines.push('mkdir -p i2i-vessel/bottles i2i-vessel/TASK');
+  lines.push(`echo "# SESSION-STATE for ${spec.name}" > i2i-vessel/SESSION-STATE.md`);
+  lines.push('chmod +x scripts/fleet-scout.sh scripts/gc-self-audit.sh');
+  lines.push('');
+  lines.push('# 6. Register with fleet');
+  lines.push('./scripts/fleet-scout.sh register || echo "Fleet not reachable (expected on first run)"');
+  lines.push('');
+  lines.push(`echo "Done. Try: openclaw agent --message \\"${spec.name}: ping\\""`);
   return lines.join('\n') + '\n';
+}
+
+/**
+ * Generate all fleet protocol files for a harness.
+ */
+export function fleetProtocolFiles(spec: HarnessSpec): Record<string, string> {
+  return {
+    'AGENTS.md': agentsMarkdown(spec),
+    'FLEET_PROTOCOL.md': fleetProtocolMarkdown(spec),
+    '.gcconfig': gcConfigToml(spec),
+    'scripts/fleet-scout.sh': fleetScoutScript(spec),
+    'scripts/gc-self-audit.sh': gcSelfAuditScript(spec),
+    'i2i-vessel/SESSION-STATE.md': `# SESSION-STATE for ${spec.name}\n\n_Last boot: pending_\n\n`,
+  };
 }
 
 export const adapter: HostAdapter = {
@@ -147,6 +360,7 @@ export const adapter: HostAdapter = {
     'openclaw.json': configJson(spec),
     'SKILL.md': skillMarkdown(spec),
     'install-openclaw.sh': installScript(spec),
+    ...fleetProtocolFiles(spec),
   }),
 };
 
