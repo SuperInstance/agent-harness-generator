@@ -291,7 +291,7 @@ export function gcSelfAuditScript(spec: HarnessSpec): string {
     'TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)',
     '',
     'cat <<BOTTLE | curl -s -X POST "$HARBOR/bottle" -H "Content-Type: text/markdown" --data-binary @- >/dev/null',
-    `# Bottle: gc-audit-${spec.name} — ${TIMESTAMP}`,
+    `# Bottle: gc-audit-${spec.name} — \${TIMESTAMP}`,
     '',
     '- **instance**: ' + spec.name,
     '- **timestamp**: ${TIMESTAMP}',
@@ -354,14 +354,90 @@ export function fleetProtocolFiles(spec: HarnessSpec): Record<string, string> {
   };
 }
 
+export function fleetAgentSystemPrompt(): string {
+  return [
+    'You are a fleet-coordinator agent for a SuperInstance fleet.',
+    'Your roles:',
+    '- Register this harness with the fleet on startup',
+    '- Send heartbeat pings to the fleet registry',
+    '- Write state bottles to the I2I harbor',
+    '- Report GC metrics (disk/RAM/load) periodically',
+    '- Push pulse metrics to the conservation-meter',
+    '- Communicate with other fleet members via bottles',
+    '',
+    'Available fleet services:',
+    '- Harbor (I2I): port 8796/8797 — bottle read/write',
+    '- Conservation Meter: port 8798 — UDP pulse metrics',
+    '- Rotation Feed: port 8799 — fleet rotation',
+    '- Headspace (Vector): port 9090 — vector DB',
+    '- Colony API: port 8820 — colony management',
+    '- Colony Market: port 8822 — colony marketplace',
+    '- Colony Games: port 8823 — colony games',
+    '',
+    'Fleet repo: https://github.com/SuperInstance/baton-system',
+    'Coordination: https://github.com/SuperInstance/construct-coordination',
+  ].join('\n');
+}
+
 export const adapter: HostAdapter = {
   name: HOST_NAME,
-  generateConfig: (spec: HarnessSpec) => ({
-    'openclaw.json': configJson(spec),
-    'SKILL.md': skillMarkdown(spec),
-    'install-openclaw.sh': installScript(spec),
-    ...fleetProtocolFiles(spec),
-  }),
+  generateConfig: (spec: HarnessSpec) => {
+    const files: Record<string, string> = {
+      'openclaw.json': configJson(spec),
+      'SKILL.md': skillMarkdown(spec),
+      'install-openclaw.sh': installScript(spec),
+      ...fleetProtocolFiles(spec),
+    };
+
+    // When --with-fleet is active, inject additional fleet agents and
+    // MCP servers into the generated config.
+    if (spec.withFleet) {
+      // Generate openclaw.json with fleet MCP servers
+      const fleetMcp: Record<string, OpenClawMcpServerEntry> = {
+        'fleet-registration': { command: 'node', args: ['scripts/fleet-scout.sh', 'register'] },
+        'gc-report': { command: 'bash', args: ['scripts/gc-self-audit.sh'] },
+      };
+
+      // Merge fleet MCP servers into the generated config
+      const baseMcp: Record<string, OpenClawMcpServerEntry> = {};
+      for (const s of spec.mcpServers ?? []) {
+        baseMcp[s.name] = serverToOpenClaw(s);
+      }
+      files['openclaw.json'] = JSON.stringify({
+        mcp_servers: { ...baseMcp, ...fleetMcp },
+      }, null, 2) + '\n';
+
+      // Add fleet-coordinator agent to the skill
+      const fleetAgentName = 'fleet-coordinator';
+      const hasCoordinator = (spec.agents ?? []).some(a => a.name === fleetAgentName);
+      if (!hasCoordinator) {
+        const agents = spec.agents ?? [];
+        const agentSection = agents.length > 0
+          ? agents.map(a => '- **' + a.name + '**: ' + (a.systemPrompt ?? '')).join('\n')
+          : '*No agents defined*';
+        const fleetLine = '- **fleet-coordinator**: ' + fleetAgentSystemPrompt().split('\n').join(' ');
+        const newSkill = skillMarkdown(spec)
+          .replace('## Agents\n\n' + agentSection, '## Agents\n\n' + agentSection + '\n' + fleetLine);
+        files['SKILL.md'] = newSkill;
+      }
+
+      // Add fleet-registration to the install script
+      const installer = files['install-openclaw.sh'];
+      if (!installer.includes('npm install @superinstance/fleet-kit')) {
+        files['install-openclaw.sh'] = installer.replace(
+          '# 3. Merge MCP servers into ~/.openclaw/openclaw.json',
+          [
+            '# 3a. Install fleet-kit SDK',
+            'npm install @superinstance/fleet-kit',
+            '',
+            '# 3b. Merge MCP servers into ~/.openclaw/openclaw.json',
+          ].join('\n')
+        );
+      }
+    }
+
+    return files;
+  },
 };
 
 export default adapter;

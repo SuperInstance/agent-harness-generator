@@ -1,0 +1,29 @@
+{
+  "name": "@superinstance/fleet-kit-plugin",
+  "version": "0.1.0",
+  "description": "SuperInstance fleet integration plugin for agent-harness-generator — adds --with-fleet support",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist/**", "templates/**"],
+  "scripts": {
+    "build": "tsc",
+    "test": "node --test dist/__tests__/*.test.js"
+  },
+  "dependencies": {
+    "@metaharness/kernel": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

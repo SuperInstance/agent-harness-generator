@@ -140,6 +140,7 @@ export interface CliArgs {
   fromExisting?: string;
   list?: boolean;
   wizard?: boolean;
+  withFleet?: boolean;
 }
 
 export function parseArgs(argv: string[]): CliArgs {
@@ -168,6 +169,8 @@ export function parseArgs(argv: string[]): CliArgs {
       // iter 100: opt-in interactive flow. Off by default so CI scripts
       // calling no-args keep getting the usage message instead of hanging.
       out.wizard = true;
+    } else if (a === '--with-fleet') {
+      out.withFleet = true;
     } else if (!a.startsWith('-') && !out.name) {
       out.name = a;
     }
@@ -196,6 +199,7 @@ export interface ScaffoldOptions {
   description?: string;
   targetDir: string;
   force?: boolean;
+  withFleet?: boolean;
   generatorVersion: string;
 }
 
@@ -230,6 +234,7 @@ export async function scaffold(opts: ScaffoldOptions): Promise<ScaffoldResult> {
     name: opts.name,
     description: opts.description ?? 'My AI agent harness',
     host: opts.host,
+    with_fleet: opts.withFleet === true ? 'true' : 'false',
   };
   const rendered = await walkTemplate(dir, vars, { strict: false });
   const fileMap = asFileMap(rendered);
@@ -261,6 +266,23 @@ export async function scaffold(opts: ScaffoldOptions): Promise<ScaffoldResult> {
     rendered: false,
     unresolved: [],
   });
+
+  // iter 168 – fleet integration: when --with-fleet is true, generate fleet
+  // protocol files (AGENTS.md, FLEET_PROTOCOL.md, .gcconfig, scout/audit
+  // scripts, and the i2i-vessel bootstrapper). These embed the harness name
+  // so each fleet member is self-describing.
+  if (opts.withFleet) {
+    const { generateFleetFiles } = await import('./fleet-files.js');
+    const fleetFiles = generateFleetFiles(opts.name);
+    for (const [fleetPath, fleetContent] of Object.entries(fleetFiles)) {
+      rendered.push({
+        path: fleetPath,
+        content: fleetContent,
+        rendered: false,
+        unresolved: [],
+      });
+    }
+  }
 
   const paths = await writeAtomic(opts.targetDir, rendered, { force: opts.force });
   return {
@@ -435,7 +457,7 @@ export async function main(argv: string[]): Promise<number> {
   }
 
   if (!args.name) {
-    console.log('Usage: npx metaharness <name> [--template <id>] [--host claude-code|codex|pi-dev|hermes] [--description "..."] [--force]');
+    console.log('Usage: npx metaharness <name> [--template <id>] [--host claude-code|codex|pi-dev|hermes] [--description "..."] [--force] [--with-fleet]');
     console.log('       npx metaharness --from-existing [./path]');
     console.log('       npx metaharness --wizard          (iter 100 — interactive picker)');
     console.log('       npx metaharness --list            (browse all templates)');
@@ -462,6 +484,7 @@ export async function main(argv: string[]): Promise<number> {
       description: args.description,
       targetDir,
       force: args.force,
+      withFleet: args.withFleet,
       generatorVersion: '0.1.0',
     });
     console.log(`Scaffolded ${args.name} into ${targetDir}`);

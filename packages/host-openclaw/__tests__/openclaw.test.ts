@@ -117,12 +117,18 @@ describe('@metaharness/host-openclaw — config generation', () => {
       expect(adapter.name).toBe('openclaw');
     });
 
-    it('generateConfig returns the 3 expected files', () => {
+    it('generateConfig returns the 9 expected files (including fleet protocol)', () => {
       const out = adapter.generateConfig({ name: 'x' });
       expect(Object.keys(out).sort()).toEqual([
+        '.gcconfig',
+        'AGENTS.md',
+        'FLEET_PROTOCOL.md',
         'SKILL.md',
+        'i2i-vessel/SESSION-STATE.md',
         'install-openclaw.sh',
         'openclaw.json',
+        'scripts/fleet-scout.sh',
+        'scripts/gc-self-audit.sh',
       ]);
     });
   });

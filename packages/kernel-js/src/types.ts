@@ -38,6 +38,8 @@ export interface HarnessSpec {
   hooks?: HookSpec[];
   permissions?: { allow?: string[]; deny?: string[] };
   statusLine?: string;
+  /** When true, include additional fleet protocol agents and MCP servers. */
+  withFleet?: boolean;
 }
 
 export interface HostAdapter {

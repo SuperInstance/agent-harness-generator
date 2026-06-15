@@ -76,7 +76,7 @@ describe('PulseClient', () => {
     const snap = client.snapshot();
     expect(snap.instance).toBe('test-harness');
     expect(typeof snap.diskPct).toBe('number');
-    expect(typeof sn-ap.memPct).toBe('number');
+    expect(typeof snap.memPct).toBe('number');
     expect(typeof snap.load1m).toBe('number');
     expect(typeof snap.c).toBe('number');
     expect(typeof snap.ratio).toBe('number');
