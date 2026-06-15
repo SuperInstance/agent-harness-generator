@@ -1,4 +1,4 @@
-# @ruflo/bench
+# @metaharness/bench
 
 Reproducible memory-retrieval benchmark for the kernel's HNSW + decay pipeline.
 

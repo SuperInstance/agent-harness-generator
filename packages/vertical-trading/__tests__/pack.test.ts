@@ -2,10 +2,10 @@
 
 import { describe, it, expect } from 'vitest';
 import { load, templateRoot } from '../src/index.js';
-import { verifyTemplateFilesPresent } from '@ruflo/vertical-base';
+import { verifyTemplateFilesPresent } from '@metaharness/vertical-base';
 import { existsSync } from 'node:fs';
 
-describe('@ruflo/vertical-trading', () => {
+describe('@metaharness/vertical-trading', () => {
   it('exposes a non-empty templateRoot', () => {
     expect(typeof templateRoot).toBe('string');
     expect(templateRoot.length).toBeGreaterThan(0);

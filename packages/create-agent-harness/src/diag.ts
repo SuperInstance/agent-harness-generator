@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 //
-// `harness diag` — single-question diagnostic: is the LOCAL @ruflo/kernel
+// `harness diag` — single-question diagnostic: is the LOCAL @metaharness/kernel
 // compatible with the version this harness was scaffolded against?
 //
 // Surfaces:
 //   - manifest.meta.surface     (iter 56) — which surface produced it (cli/web-ui)
 //   - manifest.meta.kernel_version (iter 58) — the version the scaffold was built against
-//   - the locally-installed @ruflo/kernel version (resolved at runtime)
+//   - the locally-installed @metaharness/kernel version (resolved at runtime)
 //   - drift verdict and actionable next step
 //
 // Why split this out of `harness doctor`?
@@ -53,7 +53,7 @@ export function skewVerdict(manifestVer: string | undefined, localVer: string | 
 }
 
 /**
- * Resolve the locally-installed @ruflo/kernel version. Uses createRequire
+ * Resolve the locally-installed @metaharness/kernel version. Uses createRequire
  * so it follows real Node resolution from the harness's package.json. We
  * never throw — a missing kernel is the WHOLE POINT of this diagnostic
  * (it gets reported as such).
@@ -61,7 +61,7 @@ export function skewVerdict(manifestVer: string | undefined, localVer: string | 
 function resolveLocalKernelVersion(harnessDir: string): string | undefined {
   try {
     const require = createRequire(join(harnessDir, 'package.json'));
-    const pkgPath = require.resolve('@ruflo/kernel/package.json');
+    const pkgPath = require.resolve('@metaharness/kernel/package.json');
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
     return typeof pkg.version === 'string' ? pkg.version : undefined;
   } catch {
@@ -73,7 +73,7 @@ function resolveLocalKernelVersion(harnessDir: string): string | undefined {
         const pkg = JSON.parse(readFileSync(wsPath, 'utf-8'));
         // Guard: must be the kernel package (iter 149 — symmetry with
         // resolveKernelVersion's name check).
-        if (pkg.name && pkg.name !== '@ruflo/kernel') return undefined;
+        if (pkg.name && pkg.name !== '@metaharness/kernel') return undefined;
         return typeof pkg.version === 'string' ? pkg.version : undefined;
       } catch {
         return undefined;
@@ -157,13 +157,13 @@ export async function buildDiagReport(harnessDir: string): Promise<DiagReport> {
   const generatorVerdict = skewVerdict(manifestGeneratorVersion, localGeneratorVersion);
   let actionable: string | undefined;
   if (verdict === 'major-diff') {
-    actionable = `Run: npm install @ruflo/kernel@${manifestKernelVersion} (major skew — APIs may break)`;
+    actionable = `Run: npm install @metaharness/kernel@${manifestKernelVersion} (major skew — APIs may break)`;
   } else if (verdict === 'minor-diff') {
-    actionable = `Run: npm install @ruflo/kernel@${manifestKernelVersion} (minor skew — new features may be missing)`;
+    actionable = `Run: npm install @metaharness/kernel@${manifestKernelVersion} (minor skew — new features may be missing)`;
   } else if (verdict === 'patch-diff') {
-    actionable = `Optional: npm install @ruflo/kernel@${manifestKernelVersion} (patch skew — usually safe)`;
+    actionable = `Optional: npm install @metaharness/kernel@${manifestKernelVersion} (patch skew — usually safe)`;
   } else if (verdict === 'unparseable' && manifestKernelVersion && !localKernelVersion) {
-    actionable = `Run: npm install @ruflo/kernel@${manifestKernelVersion} (kernel not installed locally)`;
+    actionable = `Run: npm install @metaharness/kernel@${manifestKernelVersion} (kernel not installed locally)`;
   }
   return {
     dir: harnessDir,
@@ -274,7 +274,7 @@ export function formatDiagReportJson(report: DiagReport): SubcommandResult {
  *     by the user, but anything starting with `secret_`/`token_`/`key_`
  *     is replaced with "<redacted>" so users can paste this without
  *     leaking credentials they typed into prompts)
- *   - The harness's package.json name + version + @ruflo/* deps
+ *   - The harness's package.json name + version + @metaharness/* deps
  *   - Node version, platform, arch (for cross-OS bug repro)
  *   - Last 3 .harness/* file paths (presence/absence proves which
  *     lifecycle steps the user has run)
@@ -331,7 +331,7 @@ export async function buildSupportBundle(harnessDir: string): Promise<SupportBun
       for (const block of [pkg.dependencies, pkg.devDependencies, pkg.peerDependencies] as Array<Record<string, string> | undefined>) {
         if (block && typeof block === 'object') {
           for (const [name, version] of Object.entries(block)) {
-            if (name.startsWith('@ruflo/') || name === 'create-agent-harness' || name === 'metaharness') {
+            if (name.startsWith('@metaharness/') || name === 'create-agent-harness' || name === 'metaharness') {
               rufloDeps[name] = version;
             }
           }

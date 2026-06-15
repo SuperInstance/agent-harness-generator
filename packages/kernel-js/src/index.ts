@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 //
-// @ruflo/kernel runtime resolver. Per ADR-002a, the kernel ships as Rust
+// @metaharness/kernel runtime resolver. Per ADR-002a, the kernel ships as Rust
 // source compiled to wasm + per-platform NAPI-RS for speed. BUT neither of
 // those is guaranteed to be present in a plain `npm install` (the wasm pkg/
 // is built by a separate CI job; the NAPI platform packages are optional).
@@ -32,11 +32,11 @@ async function loadNative(): Promise<KernelBackend | null> {
   try {
     const plat = `${process.platform}-${process.arch}`;
     const map: Record<string, string> = {
-      'darwin-arm64': '@ruflo/kernel-darwin-arm64',
-      'darwin-x64': '@ruflo/kernel-darwin-x64',
-      'linux-x64': '@ruflo/kernel-linux-x64-gnu',
-      'linux-arm64': '@ruflo/kernel-linux-arm64-gnu',
-      'win32-x64': '@ruflo/kernel-win32-x64-msvc',
+      'darwin-arm64': '@metaharness/kernel-darwin-arm64',
+      'darwin-x64': '@metaharness/kernel-darwin-x64',
+      'linux-x64': '@metaharness/kernel-linux-x64-gnu',
+      'linux-arm64': '@metaharness/kernel-linux-arm64-gnu',
+      'win32-x64': '@metaharness/kernel-win32-x64-msvc',
     };
     const pkg = map[plat];
     if (!pkg) return null;

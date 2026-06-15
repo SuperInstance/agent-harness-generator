@@ -3,7 +3,7 @@
 import { describe, it, expect } from 'vitest';
 import { serverToOpenClaw, configJson, skillMarkdown, installScript, adapter, HOST_NAME } from '../src/index.js';
 
-describe('@ruflo/host-openclaw — config generation', () => {
+describe('@metaharness/host-openclaw — config generation', () => {
   describe('serverToOpenClaw', () => {
     it('converts stdio command form', () => {
       const e = serverToOpenClaw({

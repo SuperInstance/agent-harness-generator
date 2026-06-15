@@ -1,4 +1,4 @@
-# @ruflo/host-opencode
+# @metaharness/host-opencode
 
 > [OpenCode](https://opencode.ai) (sst/opencode) host adapter for
 > [agent-harness-generator](https://github.com/ruvnet/agent-harness-generator).
@@ -60,7 +60,7 @@ This adapter is normally consumed via `npx metaharness <name> --host opencode`.
 Direct programmatic use:
 
 ```ts
-import { adapter } from '@ruflo/host-opencode';
+import { adapter } from '@metaharness/host-opencode';
 const files = adapter.generateConfig!(harnessSpec);
 // files === { '.opencode/opencode.json': '...', 'install.md': '...' }
 ```

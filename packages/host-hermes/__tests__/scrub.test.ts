@@ -3,7 +3,7 @@
 import { describe, it, expect } from 'vitest';
 import { scrubHermesBlocks, optionalMcpYaml, cliConfigYaml } from '../src/index.js';
 
-describe('@ruflo/host-hermes — Hermes-4 quirk handling', () => {
+describe('@metaharness/host-hermes — Hermes-4 quirk handling', () => {
   describe('scrubHermesBlocks', () => {
     it('strips well-formed <think>...</think>', () => {
       const r = scrubHermesBlocks('keep me <think>drop me</think> keep me too');

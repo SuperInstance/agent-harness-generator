@@ -1,4 +1,4 @@
-# @ruflo/host-codex
+# @metaharness/host-codex
 
 [OpenAI Codex CLI](https://developers.openai.com/codex) host adapter for the [agent-harness-generator](https://github.com/ruvnet/agent-harness-generator) project.
 
@@ -10,7 +10,7 @@ Generates the host-specific config a Codex-targeted harness needs:
 ## Usage
 
 ```js
-import adapter from '@ruflo/host-codex';
+import adapter from '@metaharness/host-codex';
 
 const config = adapter.generateConfig({
   name: 'my-bot',

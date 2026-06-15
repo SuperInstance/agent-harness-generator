@@ -12,7 +12,7 @@
 //     using the harness's local claim set. Prints the structured
 //     outcome (result / denied / not-found / bad-args).
 //
-// The ToolDispatcher itself lives in @ruflo/kernel/dispatch.js (TS)
+// The ToolDispatcher itself lives in @metaharness/kernel/dispatch.js (TS)
 // + crates/kernel/src/dispatch.rs (Rust). This module is just the
 // CLI surface that loads the harness's MCP config + claim set and
 // hands them off.
@@ -124,7 +124,7 @@ export async function mcpInvoke(args: string[]): Promise<SubcommandResult> {
   // its import cost on every help/ls invocation.
   let DispatcherClass: any;
   try {
-    const mod = await import('@ruflo/kernel/dispatch');
+    const mod = await import('@metaharness/kernel/dispatch');
     DispatcherClass = (mod as any).ToolDispatcher;
   } catch (e) {
     return { code: 1, lines: [`failed to load dispatcher: ${e instanceof Error ? e.message : e}`] };

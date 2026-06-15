@@ -11,7 +11,7 @@ async function makeHarnessDir(): Promise<string> {
   await writeFile(join(dir, 'package.json'), JSON.stringify({
     name: 'test-harness',
     version: '0.1.0',
-    dependencies: { '@ruflo/kernel': '^0.1.0' },
+    dependencies: { '@metaharness/kernel': '^0.1.0' },
   }, null, 2));
   await mkdir(join(dir, '.harness'), { recursive: true });
   await writeFile(join(dir, '.harness', 'manifest.json'), JSON.stringify({

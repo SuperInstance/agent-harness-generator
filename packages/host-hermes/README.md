@@ -1,4 +1,4 @@
-# @ruflo/host-hermes
+# @metaharness/host-hermes
 
 [Hermes Agent (NousResearch)](https://hermes-agent.nousresearch.com/docs/) host adapter for the [agent-harness-generator](https://github.com/ruvnet/agent-harness-generator) project.
 
@@ -31,7 +31,7 @@ This adapter targets the **current** runtime.
 ## Usage
 
 ```js
-import adapter, { scrubHermesBlocks } from '@ruflo/host-hermes';
+import adapter, { scrubHermesBlocks } from '@metaharness/host-hermes';
 
 const config = adapter.generateConfig({
   name: 'my-bot',

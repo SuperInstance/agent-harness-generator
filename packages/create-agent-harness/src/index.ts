@@ -13,11 +13,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const TEMPLATES_ROOT = resolve(__dirname, '..', 'templates');
 
 /**
- * Resolve `@ruflo/kernel`'s version at scaffold time so we can stamp it into
+ * Resolve `@metaharness/kernel`'s version at scaffold time so we can stamp it into
  * `manifest.meta.kernel_version` (ADR-027 diagnostic). Falls through three
  * lookup paths because the create-agent-harness package can run:
  *   - from a workspace checkout (`packages/kernel-js/package.json`)
- *   - from an installed npm tree (resolve `@ruflo/kernel/package.json`)
+ *   - from an installed npm tree (resolve `@metaharness/kernel/package.json`)
  *   - from the prebuilt dist with neither sibling (fall back to 'unknown')
  *
  * We never throw — a missing kernel version downgrades the meta block to
@@ -29,7 +29,7 @@ function resolveKernelVersion(): string | undefined {
   const candidates = [
     // Workspace layout: packages/create-agent-harness/dist/ → ../../kernel-js/package.json
     resolve(__dirname, '..', '..', 'kernel-js', 'package.json'),
-    // Installed layout: sibling node_modules/@ruflo/kernel/package.json
+    // Installed layout: sibling node_modules/@metaharness/kernel/package.json
     resolve(__dirname, '..', '..', '@ruflo', 'kernel', 'package.json'),
     // Fallback: top-level node_modules
     resolve(__dirname, '..', '..', '..', '@ruflo', 'kernel', 'package.json'),
@@ -43,7 +43,7 @@ function resolveKernelVersion(): string | undefined {
         // package.json (e.g. metaharness), leaking the CLI version into
         // manifest.meta.kernel_version and producing a phantom skew in
         // `harness diag` (iter 149 fix).
-        if (pkg.name && pkg.name !== '@ruflo/kernel') continue;
+        if (pkg.name && pkg.name !== '@metaharness/kernel') continue;
         if (typeof pkg.version === 'string' && pkg.version.length > 0) {
           return pkg.version;
         }

@@ -1,4 +1,4 @@
-# @ruflo/vertical-trading
+# @metaharness/vertical-trading
 
 Standalone vertical pack for the [agent-harness-generator](https://github.com/ruvnet/agent-harness-generator) — trading harness with paper-mode-default + circuit breakers + fractional-Kelly position sizing.
 
@@ -24,13 +24,13 @@ Safety defaults:
 ## Use
 
 ```bash
-npx create-agent-harness my-trader --template-package @ruflo/vertical-trading
+npx create-agent-harness my-trader --template-package @metaharness/vertical-trading
 ```
 
 Or programmatically:
 
 ```js
-import pack from '@ruflo/vertical-trading';
+import pack from '@metaharness/vertical-trading';
 const { manifest, templateRoot } = await pack.load();
 // Pass to your scaffolder.
 ```

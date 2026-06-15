@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 //
-// @ruflo/host-codex — OpenAI Codex CLI host adapter.
+// @metaharness/host-codex — OpenAI Codex CLI host adapter.
 //
 // Verified integration surface (from research):
 //   - Repo: https://github.com/openai/codex
@@ -19,7 +19,7 @@
 //      Codex analog must be approximated through MCP tool calls or simply
 //      no-op (the kernel returns Ok(()) silently).
 
-import type { HostAdapter, HarnessSpec, McpServerSpec } from '@ruflo/kernel';
+import type { HostAdapter, HarnessSpec, McpServerSpec } from '@metaharness/kernel';
 
 export const HOST_NAME = 'codex' as const;
 

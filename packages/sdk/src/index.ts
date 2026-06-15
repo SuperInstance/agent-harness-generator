@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 //
-// @ruflo/sdk — convenience helpers for harness authors.
+// @metaharness/sdk — convenience helpers for harness authors.
 //
-// You CAN build a harness against @ruflo/kernel directly. This SDK gives
+// You CAN build a harness against @metaharness/kernel directly. This SDK gives
 // you typed, validated, named definitions so your IDE catches typos before
 // they reach the kernel + you don't have to remember the field names.
 //

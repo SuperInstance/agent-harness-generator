@@ -4,7 +4,7 @@
 //
 // `create-agent-harness` ships with bundled templates (templates/minimal,
 // templates/vertical_*). When the user passes `--template-package
-// @ruflo/vertical-trading`, this loader resolves the npm package, calls
+// @metaharness/vertical-trading`, this loader resolves the npm package, calls
 // its `.load()`, and returns the on-disk template root for the existing
 // walker to consume.
 

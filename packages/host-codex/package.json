@@ -1,5 +1,5 @@
 {
-  "name": "@ruflo/host-codex",
+  "name": "@metaharness/host-codex",
   "version": "0.1.0",
   "description": "OpenAI Codex CLI host adapter for agent-harness-generator (MCP via ~/.codex/config.toml)",
   "homepage": "https://github.com/ruvnet/agent-harness-generator",
@@ -26,7 +26,7 @@
   },
   "keywords": ["agent-harness", "openai-codex", "codex", "mcp", "host-adapter", "ruflo"],
   "publishConfig": { "access": "public" },
-  "dependencies": { "@ruflo/kernel": "0.1.0" },
+  "dependencies": { "@metaharness/kernel": "0.1.0" },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.4.0",

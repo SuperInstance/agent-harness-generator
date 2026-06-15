@@ -36,7 +36,7 @@ describe('scaffold (e2e)', () => {
 
     const pkg = await readFile(join(target, 'package.json'), 'utf-8');
     expect(pkg).toContain('"name": "my-bot"');
-    expect(pkg).toContain('@ruflo/host-claude-code');
+    expect(pkg).toContain('@metaharness/host-claude-code');
 
     const claudeMd = await readFile(join(target, 'CLAUDE.md'), 'utf-8');
     expect(claudeMd).toContain('# my-bot');

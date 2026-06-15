@@ -99,10 +99,10 @@
     "prompts": "^2.4.2"
   },
   "peerDependencies": {
-    "@ruflo/kernel": "0.1.0"
+    "@metaharness/kernel": "0.1.0"
   },
   "peerDependenciesMeta": {
-    "@ruflo/kernel": {
+    "@metaharness/kernel": {
       "optional": true
     }
   },

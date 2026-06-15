@@ -1,7 +1,7 @@
 {
-  "name": "@ruflo/vertical-base",
+  "name": "@metaharness/vertical-base",
   "version": "0.1.0",
-  "description": "Shared contract for @ruflo/vertical-* packs — VerticalPack interface, manifest schema, template-files protocol",
+  "description": "Shared contract for @metaharness/vertical-* packs — VerticalPack interface, manifest schema, template-files protocol",
   "homepage": "https://github.com/ruvnet/agent-harness-generator",
   "repository": {
     "type": "git",

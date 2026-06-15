@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 //
-// @ruflo/host-opencode — OpenCode (sst/opencode) host adapter. The 8th host,
+// @metaharness/host-opencode — OpenCode (sst/opencode) host adapter. The 8th host,
 // per ADR-036.
 //
 // Verified integration surface (research from ADR-036):
@@ -19,7 +19,7 @@
 //   deny rules from .harness/mcp-policy.json verbatim, so the harness's
 //   posture wins through OpenCode's own enforcement gate.
 
-import type { HostAdapter, HarnessSpec, McpServerSpec } from '@ruflo/kernel';
+import type { HostAdapter, HarnessSpec, McpServerSpec } from '@metaharness/kernel';
 
 export const HOST_NAME = 'opencode' as const;
 

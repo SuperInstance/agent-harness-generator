@@ -1,5 +1,5 @@
 {
-  "name": "@ruflo/kernel",
+  "name": "@metaharness/kernel",
   "version": "0.1.0",
   "description": "Cross-platform kernel for the agent-harness-generator — wasm primary, NAPI-RS native fallback",
   "homepage": "https://github.com/ruvnet/agent-harness-generator",
@@ -64,11 +64,11 @@
     }
   },
   "optionalDependencies": {
-    "@ruflo/kernel-darwin-arm64": "0.1.0",
-    "@ruflo/kernel-darwin-x64": "0.1.0",
-    "@ruflo/kernel-linux-x64-gnu": "0.1.0",
-    "@ruflo/kernel-linux-arm64-gnu": "0.1.0",
-    "@ruflo/kernel-win32-x64-msvc": "0.1.0"
+    "@metaharness/kernel-darwin-arm64": "0.1.0",
+    "@metaharness/kernel-darwin-x64": "0.1.0",
+    "@metaharness/kernel-linux-x64-gnu": "0.1.0",
+    "@metaharness/kernel-linux-arm64-gnu": "0.1.0",
+    "@metaharness/kernel-win32-x64-msvc": "0.1.0"
   },
   "engines": {
     "node": ">=20.0.0"

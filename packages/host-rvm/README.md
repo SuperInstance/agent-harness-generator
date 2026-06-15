@@ -1,4 +1,4 @@
-# @ruflo/host-rvm
+# @metaharness/host-rvm
 
 [RVM](https://github.com/ruvnet/rvm) — the Agentic Virtual Machine — host adapter for the [agent-harness-generator](https://github.com/ruvnet/agent-harness-generator) project.
 
@@ -41,7 +41,7 @@ Default proof tier:
 ## Usage
 
 ```js
-import adapter, { buildCapabilityTable, partitionToml } from '@ruflo/host-rvm';
+import adapter, { buildCapabilityTable, partitionToml } from '@metaharness/host-rvm';
 
 const config = adapter.generateConfig({
   name: 'my-bot',
@@ -88,7 +88,7 @@ The adapter declares this pairing in the emitted `wasm-guest.json`:
 }
 ```
 
-RVF is opt-in — the partition still boots without it. Use `@ruflo/kernel/memory-rvf` to plug it into the kernel memory subsystem.
+RVF is opt-in — the partition still boots without it. Use `@metaharness/kernel/memory-rvf` to plug it into the kernel memory subsystem.
 
 ## RVM facts
 

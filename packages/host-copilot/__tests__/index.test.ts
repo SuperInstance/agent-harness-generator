@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 //
-// iter 127 — @ruflo/host-copilot (ADR-032) tests.
+// iter 127 — @metaharness/host-copilot (ADR-032) tests.
 //
 // Verifies the 7th host adapter produces VSCode-loadable MCP config and a
 // runnable install runbook. Per the host-functional gate (iter 126), we
@@ -24,7 +24,7 @@ const baseSpec = {
   ],
 };
 
-describe('@ruflo/host-copilot (iter 127, ADR-032)', () => {
+describe('@metaharness/host-copilot (iter 127, ADR-032)', () => {
   it('HOST_NAME is "copilot"', () => {
     expect(HOST_NAME).toBe('copilot');
     expect(adapter.name).toBe('copilot');

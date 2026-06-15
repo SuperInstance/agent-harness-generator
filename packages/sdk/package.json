@@ -1,7 +1,7 @@
 {
-  "name": "@ruflo/sdk",
+  "name": "@metaharness/sdk",
   "version": "0.1.0",
-  "description": "Convenience helpers for harness authors — defineHarness, defineAgent, defineSkill, defineTool. Light wrappers around @ruflo/kernel.",
+  "description": "Convenience helpers for harness authors — defineHarness, defineAgent, defineSkill, defineTool. Light wrappers around @metaharness/kernel.",
   "homepage": "https://github.com/ruvnet/agent-harness-generator",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
   },
   "keywords": ["agent-harness", "sdk", "kernel", "ruflo"],
   "publishConfig": { "access": "public" },
-  "dependencies": { "@ruflo/kernel": "0.1.0" },
+  "dependencies": { "@metaharness/kernel": "0.1.0" },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.4.0",

@@ -9,7 +9,7 @@ describe('loadExternalTemplate', () => {
   });
 
   it('throws with actionable message on import failure', async () => {
-    await expect(loadExternalTemplate('@ruflo/this-package-definitely-does-not-exist-12345'))
+    await expect(loadExternalTemplate('@metaharness/this-package-definitely-does-not-exist-12345'))
       .rejects.toThrow(/Did you forget to install it/);
   });
 });

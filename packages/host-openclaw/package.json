@@ -1,5 +1,5 @@
 {
-  "name": "@ruflo/host-openclaw",
+  "name": "@metaharness/host-openclaw",
   "version": "0.1.0",
   "description": "OpenClaw (personal AI assistant) host adapter for agent-harness-generator (MCP via ~/.openclaw/openclaw.json + workspace skills)",
   "homepage": "https://github.com/ruvnet/agent-harness-generator",
@@ -33,7 +33,7 @@
     "ruflo"
   ],
   "publishConfig": { "access": "public" },
-  "dependencies": { "@ruflo/kernel": "0.1.0" },
+  "dependencies": { "@metaharness/kernel": "0.1.0" },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.4.0",

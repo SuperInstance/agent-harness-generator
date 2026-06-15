@@ -1,4 +1,4 @@
-# @ruflo/host-openclaw
+# @metaharness/host-openclaw
 
 [OpenClaw](https://github.com/openclaw/openclaw) host adapter for the [agent-harness-generator](https://github.com/ruvnet/agent-harness-generator) project.
 
@@ -13,7 +13,7 @@ Generates the per-harness files an OpenClaw-targeted harness needs:
 ## Usage
 
 ```js
-import adapter from '@ruflo/host-openclaw';
+import adapter from '@metaharness/host-openclaw';
 
 const config = adapter.generateConfig({
   name: 'my-bot',

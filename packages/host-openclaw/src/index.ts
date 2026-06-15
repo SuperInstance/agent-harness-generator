@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 //
-// @ruflo/host-openclaw — OpenClaw host adapter.
+// @metaharness/host-openclaw — OpenClaw host adapter.
 //
 // OpenClaw is a "Personal AI Assistant" CLI agent gateway — local-first,
 // multi-platform (WhatsApp/Telegram/Slack/Discord), MCP-supported.
@@ -23,7 +23,7 @@
 //   - `SKILL.md` file per kernel skill (placed in the workspace skill dir)
 //   - `install-openclaw.sh` runbook script
 
-import type { HostAdapter, HarnessSpec, McpServerSpec } from '@ruflo/kernel';
+import type { HostAdapter, HarnessSpec, McpServerSpec } from '@metaharness/kernel';
 
 export const HOST_NAME = 'openclaw' as const;
 

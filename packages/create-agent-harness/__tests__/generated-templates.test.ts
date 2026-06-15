@@ -105,7 +105,7 @@ describe('generated templates scaffold cleanly', () => {
       // package.json is valid JSON carrying the harness name + kernel dep.
       const pkg = JSON.parse(await readFile(join(target, 'package.json'), 'utf-8'));
       expect(pkg.name).toBe(name);
-      expect(pkg.dependencies['@ruflo/kernel']).toBeDefined();
+      expect(pkg.dependencies['@metaharness/kernel']).toBeDefined();
 
       // One agent file per declared agent.
       for (const a of t.agents) {

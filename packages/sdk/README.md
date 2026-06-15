@@ -1,6 +1,6 @@
-# @ruflo/sdk
+# @metaharness/sdk
 
-Convenience helpers for harness authors. Wraps [`@ruflo/kernel`](../kernel-js/) with typed, validated, named definitions so your IDE catches typos before they reach the kernel.
+Convenience helpers for harness authors. Wraps [`@metaharness/kernel`](../kernel-js/) with typed, validated, named definitions so your IDE catches typos before they reach the kernel.
 
 ## Use
 
@@ -8,7 +8,7 @@ Convenience helpers for harness authors. Wraps [`@ruflo/kernel`](../kernel-js/) 
 import {
   defineHarness, defineAgent, defineSkill, defineTool,
   defineHook, defineMcpServer,
-} from '@ruflo/sdk';
+} from '@metaharness/sdk';
 
 const triager = defineAgent({
   name: 'triager',

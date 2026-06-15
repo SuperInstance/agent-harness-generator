@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 //
-// iter 128 — @ruflo/host-opencode (ADR-036) tests. Mirror of the iter-127
+// iter 128 — @metaharness/host-opencode (ADR-036) tests. Mirror of the iter-127
 // host-copilot test suite, adapted for OpenCode's $schema-anchored JSON.
 
 import { describe, it, expect } from 'vitest';
@@ -25,7 +25,7 @@ const baseSpec = {
   },
 };
 
-describe('@ruflo/host-opencode (iter 128, ADR-036)', () => {
+describe('@metaharness/host-opencode (iter 128, ADR-036)', () => {
   it('HOST_NAME is "opencode"', () => {
     expect(HOST_NAME).toBe('opencode');
     expect(adapter.name).toBe('opencode');

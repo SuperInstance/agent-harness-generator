@@ -1,4 +1,4 @@
-# @ruflo/host-copilot
+# @metaharness/host-copilot
 
 > GitHub Copilot (VSCode) host adapter for [agent-harness-generator](https://github.com/ruvnet/agent-harness-generator).
 > The 7th host adapter, per [ADR-032](https://github.com/ruvnet/agent-harness-generator/blob/main/docs/adrs/ADR-032-host-copilot.md).
@@ -52,7 +52,7 @@ This adapter is normally consumed via `npx metaharness <name> --host copilot`,
 which picks it up from the canonical HOSTS catalog. Direct programmatic use:
 
 ```ts
-import { adapter } from '@ruflo/host-copilot';
+import { adapter } from '@metaharness/host-copilot';
 const files = adapter.generateConfig!(harnessSpec);
 // files === { '.vscode/mcp.json': '...', 'install.md': '...' }
 ```

@@ -6,10 +6,10 @@
 // with NO build step. `npm run build` (tsc) is only needed if you extend the
 // TypeScript in src/. The published package ships this file directly (see the
 // "bin" + "files" fields in package.json), so `npx {{name}}` works the moment
-// `npm install` has resolved @ruflo/kernel + @ruflo/host-{{host}}.
+// `npm install` has resolved @metaharness/kernel + @metaharness/host-{{host}}.
 
-import { loadKernel } from '@ruflo/kernel';
-import adapter from '@ruflo/host-{{host}}';
+import { loadKernel } from '@metaharness/kernel';
+import adapter from '@metaharness/host-{{host}}';
 
 const HARNESS_NAME = '{{name}}';
 

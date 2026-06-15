@@ -174,7 +174,7 @@ async function runDiag(dir: string): Promise<CheckResult> {
   if (!r.localKernelVersion) {
     return {
       name: 'diag', code: 0, tag: 'SKIP',
-      detail: `@ruflo/kernel not installed locally (manifest pins ${r.manifestKernelVersion})`,
+      detail: `@metaharness/kernel not installed locally (manifest pins ${r.manifestKernelVersion})`,
     };
   }
   if (r.verdict === 'match' || r.verdict === 'patch-diff') {

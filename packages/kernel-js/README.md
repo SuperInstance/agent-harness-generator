@@ -1,4 +1,4 @@
-# @ruflo/kernel
+# @metaharness/kernel
 
 Cross-platform kernel for the [agent-harness-generator](https://github.com/ruvnet/agent-harness-generator) project.
 
@@ -14,15 +14,15 @@ At load time, `loadKernel()` prefers the per-platform native package; falls back
 ## Install
 
 ```bash
-npm install @ruflo/kernel
+npm install @metaharness/kernel
 ```
 
-The native packages (`@ruflo/kernel-darwin-arm64`, `-linux-x64-gnu`, etc.) are declared as `optionalDependencies` — npm installs only the one for your platform.
+The native packages (`@metaharness/kernel-darwin-arm64`, `-linux-x64-gnu`, etc.) are declared as `optionalDependencies` — npm installs only the one for your platform.
 
 ## Usage
 
 ```js
-import { loadKernel } from '@ruflo/kernel';
+import { loadKernel } from '@metaharness/kernel';
 
 const kernel = await loadKernel();
 const info = kernel.kernelInfo();
@@ -39,7 +39,7 @@ if (err) throw new Error(err);
 ### Memory subsystem (subpath export)
 
 ```js
-import { rankWithDecay } from '@ruflo/kernel/memory';
+import { rankWithDecay } from '@metaharness/kernel/memory';
 
 const ranked = await rankWithDecay(hits, {
   useDecay: true,

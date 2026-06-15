@@ -3,7 +3,7 @@
 import { describe, it, expect } from 'vitest';
 import { tomlEscape, serverToToml, configToml, mcpAddCommands } from '../src/index.js';
 
-describe('@ruflo/host-codex — TOML generation', () => {
+describe('@metaharness/host-codex — TOML generation', () => {
   describe('tomlEscape', () => {
     it('escapes backslash, quote, newline, return, tab', () => {
       expect(tomlEscape('a\\b')).toBe('a\\\\b');

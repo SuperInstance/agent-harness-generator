@@ -24,7 +24,7 @@
 //
 // Per ADR-016 (Migration for ruflo users), the eject is one-way: the
 // resulting harness is independent of ruflo and gets kernel updates via
-// @ruflo/kernel npm peer, not via re-init.
+// @metaharness/kernel npm peer, not via re-init.
 
 import { existsSync } from 'node:fs';
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';

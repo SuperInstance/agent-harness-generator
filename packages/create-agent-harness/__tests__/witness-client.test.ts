@@ -50,7 +50,7 @@ describe('verifyWitness — shape gate', () => {
   });
 
   it('accepts a shape-valid manifest in degraded mode (no kernel)', async () => {
-    // No @ruflo/kernel install in the test runner -> falls through to
+    // No @metaharness/kernel install in the test runner -> falls through to
     // shape-only verification. Confirms the degraded mode is graceful.
     const r = await verifyWitness({
       schema: 1, harness: 'x', version: '0.1.0', entries: [],

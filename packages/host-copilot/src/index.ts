@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 //
-// @ruflo/host-copilot — GitHub Copilot (VSCode) host adapter. The 7th host,
+// @metaharness/host-copilot — GitHub Copilot (VSCode) host adapter. The 7th host,
 // per ADR-032.
 //
 // Verified integration surface (research from ADR-032):
@@ -24,7 +24,7 @@
 //   3. No webhook / event surface — the hooks subsystem maps to MCP
 //      tool calls instead.
 
-import type { HostAdapter, HarnessSpec, McpServerSpec } from '@ruflo/kernel';
+import type { HostAdapter, HarnessSpec, McpServerSpec } from '@metaharness/kernel';
 
 export const HOST_NAME = 'copilot' as const;
 

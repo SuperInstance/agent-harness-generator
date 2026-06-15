@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 //
-// @ruflo/vertical-base — shared contract for @ruflo/vertical-* packs.
+// @metaharness/vertical-base — shared contract for @metaharness/vertical-* packs.
 //
 // Per ADR-013, vertical packs are PUBLISHED as standalone npm packages
 // so each can be owned by a domain expert without touching the

@@ -1,5 +1,5 @@
 {
-  "name": "@ruflo/vertical-trading",
+  "name": "@metaharness/vertical-trading",
   "version": "0.1.0",
   "description": "Trading harness vertical pack — paper-mode-default, circuit breakers, fractional-Kelly position sizing, 5-agent pipeline (market-watcher / signal-gen / risk-checker / executor / postmortem)",
   "homepage": "https://github.com/ruvnet/agent-harness-generator",
@@ -38,7 +38,7 @@
   ],
   "publishConfig": { "access": "public" },
   "dependencies": {
-    "@ruflo/vertical-base": "0.1.0"
+    "@metaharness/vertical-base": "0.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

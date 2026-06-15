@@ -46,7 +46,7 @@ const SAFE = {
 
 describe('scanMcp', () => {
   it('passes a safe default-deny harness', async () => {
-    const dir = await makeHarness({ policy: SAFE, allow: ['mcp__bot__*'], deps: { '@ruflo/kernel': '0.1.0' } });
+    const dir = await makeHarness({ policy: SAFE, allow: ['mcp__bot__*'], deps: { '@metaharness/kernel': '0.1.0' } });
     const r = scanMcp(dir);
     expect(r.mcpEnabled).toBe(true);
     expect(r.worst).toBe('info');
@@ -100,7 +100,7 @@ describe('mcpScanCmd', () => {
     const bad = await makeHarness({ policy: null, allow: ['mcp__bot__*'] });
     expect(mcpScanCmd([bad]).code).toBe(1);
 
-    const good = await makeHarness({ policy: SAFE, allow: ['mcp__bot__*'], deps: { '@ruflo/kernel': '0.1.0' } });
+    const good = await makeHarness({ policy: SAFE, allow: ['mcp__bot__*'], deps: { '@metaharness/kernel': '0.1.0' } });
     const r = mcpScanCmd([good]);
     expect(r.code).toBe(0);
     expect(r.lines.join('\n')).toContain('Result: INFO');

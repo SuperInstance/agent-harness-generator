@@ -30,8 +30,8 @@ describe('cross-host: minimal template scaffolds for every host', () => {
 
       const pkg = JSON.parse(await readFile(join(target, 'package.json'), 'utf-8'));
       expect(pkg.name).toBe(`bot-${host}`);
-      expect(pkg.dependencies['@ruflo/kernel']).toBeDefined();
-      expect(pkg.dependencies[`@ruflo/host-${host}`]).toBeDefined();
+      expect(pkg.dependencies['@metaharness/kernel']).toBeDefined();
+      expect(pkg.dependencies[`@metaharness/host-${host}`]).toBeDefined();
     });
   }
 });

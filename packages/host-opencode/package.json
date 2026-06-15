@@ -1,5 +1,5 @@
 {
-  "name": "@ruflo/host-opencode",
+  "name": "@metaharness/host-opencode",
   "version": "0.1.0",
   "description": "OpenCode (sst/opencode) host adapter for agent-harness-generator. Emits .opencode/opencode.json (ADR-036).",
   "homepage": "https://github.com/ruvnet/agent-harness-generator",
@@ -35,7 +35,7 @@
     "ADR-036"
   ],
   "publishConfig": { "access": "public" },
-  "dependencies": { "@ruflo/kernel": "0.1.0" },
+  "dependencies": { "@metaharness/kernel": "0.1.0" },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.4.0",

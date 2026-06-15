@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 //
-// @ruflo/host-claude-code — Claude Code host adapter.
+// @metaharness/host-claude-code — Claude Code host adapter.
 //
 // Verified integration surface (from research, https://code.claude.com/docs):
 //   - MCP servers register via `claude mcp add <name> -- <command>`
@@ -18,7 +18,7 @@
 //   - Matchers use pseudo-DSL: e.g. "Bash(rm *)"
 //   - Three-level shape: event -> matcher -> handler[]
 
-import type { HostAdapter, HarnessSpec } from '@ruflo/kernel';
+import type { HostAdapter, HarnessSpec } from '@metaharness/kernel';
 
 export interface ClaudeCodeSettings {
   hooks?: Record<string, Array<{ matcher?: string; hooks: ClaudeHookHandler[] }>>;

@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 //
-// @ruflo/vertical-trading — standalone trading harness pack.
+// @metaharness/vertical-trading — standalone trading harness pack.
 //
 // Lifted from create-agent-harness/templates/vertical_trading/. The
 // templates themselves ship under `templates/` in the npm tarball; this
 // module just exposes the manifest + the on-disk template root so
 // downstream loaders (create-agent-harness's external template loader)
-// can resolve files via @ruflo/vertical-base.
+// can resolve files via @metaharness/vertical-base.
 
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readVerticalManifest, type VerticalPack } from '@ruflo/vertical-base';
+import { readVerticalManifest, type VerticalPack } from '@metaharness/vertical-base';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const TEMPLATE_ROOT = join(__dirname, '..', 'templates');

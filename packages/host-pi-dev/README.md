@@ -1,4 +1,4 @@
-# @ruflo/host-pi-dev
+# @metaharness/host-pi-dev
 
 [pi.dev coding agent](https://pi.dev/) host adapter for the [agent-harness-generator](https://github.com/ruvnet/agent-harness-generator) project.
 
@@ -19,7 +19,7 @@ This adapter generates a Pi extension (TypeScript module installed via `pi insta
 ## Usage
 
 ```js
-import adapter from '@ruflo/host-pi-dev';
+import adapter from '@metaharness/host-pi-dev';
 
 const config = adapter.generateConfig({
   name: 'my-bot',

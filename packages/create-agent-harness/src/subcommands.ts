@@ -104,8 +104,8 @@ export async function doctor(args: string[]): Promise<SubcommandResult> {
     try {
       const pkg = JSON.parse(await readFile(pkgPath, 'utf-8'));
       check(typeof pkg.name === 'string' && pkg.name.length > 0, 'package.json has a name');
-      check(!!(pkg.dependencies && pkg.dependencies['@ruflo/kernel']),
-        'declares @ruflo/kernel as dependency');
+      check(!!(pkg.dependencies && pkg.dependencies['@metaharness/kernel']),
+        'declares @metaharness/kernel as dependency');
     } catch {
       lines.push('  FAIL package.json is not valid JSON');
       problems++;
@@ -202,7 +202,7 @@ export async function doctor(args: string[]): Promise<SubcommandResult> {
  * `harness sign [path]` — produce or update the witness manifest for a
  * scaffolded harness.
  *
- * The real signing happens in the @ruflo/kernel's witness.sign_manifest.
+ * The real signing happens in the @metaharness/kernel's witness.sign_manifest.
  * This subcommand: reads .harness/manifest.json, computes per-entry
  * fingerprints, hands the entry list to the kernel for signing, writes
  * witness.json next to it.
@@ -251,7 +251,7 @@ export async function sign(args: string[]): Promise<SubcommandResult> {
     // verify report the gap explicitly.
     let signedManifest: unknown;
     try {
-      const kernel = await import('@ruflo/kernel') as unknown as {
+      const kernel = await import('@metaharness/kernel') as unknown as {
         loadKernel(): Promise<{ witnessSign?(payload: string, key: string): string }>;
       };
       const k = await kernel.loadKernel();

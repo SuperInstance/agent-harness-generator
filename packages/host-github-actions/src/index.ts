@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 //
-// @ruflo/host-github-actions — GitHub Actions host adapter. The 9th host,
+// @metaharness/host-github-actions — GitHub Actions host adapter. The 9th host,
 // per ADR-033.
 //
 // GitHub Actions is "different in kind" from the eight interactive hosts:
@@ -22,7 +22,7 @@
 // list implies, and a comment pointing at Environment protection rules for
 // production-touching jobs.
 
-import type { HostAdapter, HarnessSpec } from '@ruflo/kernel';
+import type { HostAdapter, HarnessSpec } from '@metaharness/kernel';
 
 export const HOST_NAME = 'github-actions' as const;
 

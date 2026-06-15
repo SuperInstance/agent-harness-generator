@@ -1,4 +1,4 @@
-# @ruflo/host-github-actions
+# @metaharness/host-github-actions
 
 The **9th host adapter** for [agent-harness-generator](https://github.com/ruvnet/agent-harness-generator) — GitHub Actions (ADR-033).
 
@@ -38,7 +38,7 @@ scopes the token; the Environment adds the human review it cannot.
 ## Usage
 
 ```ts
-import adapter from '@ruflo/host-github-actions';
+import adapter from '@metaharness/host-github-actions';
 
 const files = adapter.generateConfig({
   name: 'release-bot',

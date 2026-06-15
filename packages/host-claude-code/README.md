@@ -1,4 +1,4 @@
-# @ruflo/host-claude-code
+# @metaharness/host-claude-code
 
 [Claude Code](https://code.claude.com/docs/en/mcp) host adapter for the [agent-harness-generator](https://github.com/ruvnet/agent-harness-generator) project.
 
@@ -11,7 +11,7 @@ Generates the host-specific config a Claude Code-targeted harness needs:
 ## Usage
 
 ```js
-import adapter from '@ruflo/host-claude-code';
+import adapter from '@metaharness/host-claude-code';
 
 const config = adapter.generateConfig({
   name: 'my-bot',

@@ -3,7 +3,7 @@
 import { describe, it, expect } from 'vitest';
 import { settingsFor, mcpAddCommands } from '../src/index.js';
 
-describe('@ruflo/host-claude-code', () => {
+describe('@metaharness/host-claude-code', () => {
   describe('settingsFor', () => {
     it('returns hooks-free settings when no hooks declared', () => {
       const s = settingsFor({ name: 'h' });

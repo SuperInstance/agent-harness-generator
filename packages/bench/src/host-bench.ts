@@ -13,15 +13,15 @@
 //   - file-count per call
 
 import { performance } from 'node:perf_hooks';
-import adapterClaudeCode from '@ruflo/host-claude-code';
-import adapterCodex from '@ruflo/host-codex';
-import adapterPiDev from '@ruflo/host-pi-dev';
-import adapterHermes from '@ruflo/host-hermes';
-import adapterOpenclaw from '@ruflo/host-openclaw';
-import adapterRvm from '@ruflo/host-rvm';
-import adapterCopilot from '@ruflo/host-copilot';
-import adapterOpencode from '@ruflo/host-opencode';
-import adapterGithubActions from '@ruflo/host-github-actions';
+import adapterClaudeCode from '@metaharness/host-claude-code';
+import adapterCodex from '@metaharness/host-codex';
+import adapterPiDev from '@metaharness/host-pi-dev';
+import adapterHermes from '@metaharness/host-hermes';
+import adapterOpenclaw from '@metaharness/host-openclaw';
+import adapterRvm from '@metaharness/host-rvm';
+import adapterCopilot from '@metaharness/host-copilot';
+import adapterOpencode from '@metaharness/host-opencode';
+import adapterGithubActions from '@metaharness/host-github-actions';
 
 interface HostAdapter {
   name: string;
