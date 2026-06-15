@@ -1,0 +1,41 @@
+{
+  "frontier": {
+    "label": "frontier vanilla (opus-4)",
+    "model": "anthropic/claude-opus-4",
+    "quality": 0.7143414432471553,
+    "tokens": 27115,
+    "costUSD": 1.220175,
+    "qualityPerUSD": 0.5854417958466247
+  },
+  "cheap": {
+    "label": "cheap vanilla (haiku-4.5)",
+    "model": "anthropic/claude-haiku-4.5",
+    "quality": 0.7566498749788224,
+    "tokens": 40529,
+    "costUSD": 0.121587,
+    "qualityPerUSD": 6.223114929875911
+  },
+  "verdict": {
+    "baseline": {
+      "label": "frontier vanilla (opus-4)",
+      "model": "anthropic/claude-opus-4",
+      "quality": 0.7143414432471553,
+      "tokens": 27115,
+      "costUSD": 1.220175,
+      "qualityPerUSD": 0.5854417958466247
+    },
+    "challenger": {
+      "label": "cheap vanilla (haiku-4.5)",
+      "model": "anthropic/claude-haiku-4.5",
+      "quality": 0.7566498749788224,
+      "tokens": 40529,
+      "costUSD": 0.121587,
+      "qualityPerUSD": 6.223114929875911
+    },
+    "qualityDelta": 0.042308431731667095,
+    "costRatio": 10.035406745786968,
+    "qualityPerUSDRatio": 10.629775622487767,
+    "dominates": true
+  },
+  "frontierFusionCostFloor": 30.89358
+}

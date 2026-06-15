@@ -119,6 +119,34 @@ async function main() {
     return;
   }
 
+  // ADR-039: --cost-report computes the Pareto cost-efficiency comparison from
+  // committed run artifacts. PURE arithmetic — no API calls, no spend.
+  if (has('cost-report')) {
+    const { makePoint, paretoCompare, costOf } = await import('./cost-efficiency.js');
+    const frontierPath = arg('frontier') ?? resolve(dracoDir, '..', '..', 'draco', 'runs', 'threeway-frontier-full.json');
+    const cheapPath = arg('cheap-run') ?? resolve(dracoDir, '..', '..', 'draco', 'runs', 'threeway-cheap-full.json');
+    const fr = JSON.parse(readFileSync(frontierPath, 'utf-8'));
+    const ch = JSON.parse(readFileSync(cheapPath, 'utf-8'));
+    const frontier = makePoint('frontier vanilla (opus-4)', 'anthropic/claude-opus-4', fr.arms.vanilla.score, fr.arms.vanilla.totalTokens);
+    const cheap = makePoint('cheap vanilla (haiku-4.5)', 'anthropic/claude-haiku-4.5', ch.arms.vanilla.score, ch.arms.vanilla.totalTokens);
+    const v = paretoCompare(frontier, cheap);
+    // Also cost the expensive fusion arm for contrast (frontier fusion tokens).
+    const fusionCost = costOf('anthropic/claude-opus-4', fr.arms.fusion.totalTokens); // approx — fusion is multi-model; opus-rate is a floor
+    process.stdout.write(`\nDRACO COST-EFFICIENCY (ADR-039) — quality per dollar\n`);
+    process.stdout.write(`  ${frontier.label.padEnd(28)} quality ${frontier.quality.toFixed(4)}  cost $${frontier.costUSD.toFixed(3)}  q/$ ${frontier.qualityPerUSD.toFixed(2)}\n`);
+    process.stdout.write(`  ${cheap.label.padEnd(28)} quality ${cheap.quality.toFixed(4)}  cost $${cheap.costUSD.toFixed(3)}  q/$ ${cheap.qualityPerUSD.toFixed(2)}\n`);
+    process.stdout.write(`  frontier FUSION (>= opus floor)   tokens ${fr.arms.fusion.totalTokens}  cost >= $${fusionCost.toFixed(2)}\n`);
+    process.stdout.write(`\n  Pareto: cheap vanilla ${v.dominates ? 'DOMINATES' : 'does NOT dominate'} frontier vanilla\n`);
+    process.stdout.write(`    quality Δ ${v.qualityDelta >= 0 ? '+' : ''}${v.qualityDelta.toFixed(4)} · ${v.costRatio.toFixed(1)}x cheaper · ${v.qualityPerUSDRatio.toFixed(1)}x more quality/$\n`);
+    if (out) {
+      const outPath = resolve(out);
+      mkdirSync(dirname(outPath), { recursive: true });
+      writeFileSync(outPath, JSON.stringify({ frontier, cheap, verdict: v, frontierFusionCostFloor: fusionCost }, null, 2) + '\n', 'utf-8');
+      process.stderr.write(`[draco] wrote ${outPath}\n`);
+    }
+    return;
+  }
+
   // ADR-038 arm 2: --selfcon runs vanilla vs best-of-N self-consistency selection.
   if (has('selfcon')) {
     const nCand = arg('candidates') ? parseInt(arg('candidates')!, 10) : 3;
