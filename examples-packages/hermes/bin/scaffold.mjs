@@ -29,4 +29,4 @@ try {
 console.log('');
 console.log(`Scaffolded ${name} with the Hermes minimal harness.`);
 console.log(`Next: cd ${name} && npm install`);
-console.log('Then: npx harness doctor');
+console.log('Then: npm run doctor');

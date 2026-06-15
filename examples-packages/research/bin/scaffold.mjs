@@ -29,5 +29,5 @@ try {
 console.log('');
 console.log(`Next steps:`);
 console.log(`  1. cd ${name} && npm install`);
-console.log(`  2. npx harness doctor    # verify Claude Code + MCP servers`);
+console.log(`  2. npm run doctor    # verify Claude Code + MCP servers`);
 console.log(`  3. Open in Claude Code and run /research <your topic>`);

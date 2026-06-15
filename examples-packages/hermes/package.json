@@ -1,6 +1,6 @@
 {
   "name": "@metaharness/hermes",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MetaHarness example — Hermes cli-config harness scaffold for AI agents (npx @metaharness/hermes my-bot)",
   "homepage": "https://github.com/ruvnet/agent-harness-generator/tree/main/examples-packages/hermes",
   "repository": {

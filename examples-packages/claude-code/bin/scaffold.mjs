@@ -29,5 +29,5 @@ try {
 console.log('');
 console.log(`Next steps:`);
 console.log(`  cd ${name} && npm install`);
-console.log(`  npx harness doctor`);
+console.log(`  npm run doctor`);
 console.log(`  claude -p --plugin-dir . "summarize the repo and propose a first task"`);

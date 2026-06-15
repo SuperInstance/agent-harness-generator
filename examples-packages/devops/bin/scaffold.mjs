@@ -22,7 +22,7 @@ try {
   execSync(cmd, { stdio: 'inherit' });
   console.log('');
   console.log(`Next: cd ${name} && npm install`);
-  console.log(`Then: npx harness doctor`);
+  console.log(`Then: npm run doctor`);
   console.log(`Run:  claude -p --plugin-dir ${name} "page: <your incident here>"`);
 } catch (err) {
   console.error('[@metaharness/devops] scaffold failed:', err?.message || err);

@@ -1,6 +1,6 @@
 {
   "name": "@metaharness/claude-code",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MetaHarness example — Claude Code workspace + plugin scaffold with CLAUDE.md, .claude/, and MCP wiring (npx @metaharness/claude-code my-bot)",
   "homepage": "https://github.com/ruvnet/agent-harness-generator/tree/main/examples-packages/claude-code",
   "repository": {
