@@ -1,0 +1,73 @@
+// SPDX-License-Identifier: MIT
+// DRACO routing policy math (ADR-040) — pure, deterministic over a synthetic matrix.
+
+import { describe, it, expect } from 'vitest';
+import {
+  type RoutingMatrix,
+  alwaysPolicy,
+  oracleQuality,
+  oracleCostOptimal,
+  routerPolicy,
+  analyse,
+} from '../src/draco/routing.js';
+
+// Two questions, two models. haiku is cheap ($3/1M) and opus dear ($45/1M).
+// q1: haiku BEATS opus (0.80 vs 0.70). q2: opus beats haiku (0.90 vs 0.60).
+const M: RoutingMatrix = {
+  models: ['anthropic/claude-haiku-4.5', 'anthropic/claude-opus-4'],
+  questionIds: ['q1', 'q2'],
+  cells: {
+    q1: { 'anthropic/claude-haiku-4.5': { quality: 0.8, tokens: 1000 }, 'anthropic/claude-opus-4': { quality: 0.7, tokens: 1000 } },
+    q2: { 'anthropic/claude-haiku-4.5': { quality: 0.6, tokens: 1000 }, 'anthropic/claude-opus-4': { quality: 0.9, tokens: 1000 } },
+  },
+};
+
+describe('always policies', () => {
+  it('always_haiku averages haiku quality and costs haiku rate', () => {
+    const p = alwaysPolicy(M, 'anthropic/claude-haiku-4.5');
+    expect(p.quality).toBeCloseTo((0.8 + 0.6) / 2); // 0.70
+    expect(p.costUSD).toBeCloseTo(2 * (1000 / 1e6) * 3); // 2 questions × haiku
+  });
+  it('always_opus is pricier per the table', () => {
+    const haiku = alwaysPolicy(M, 'anthropic/claude-haiku-4.5');
+    const opus = alwaysPolicy(M, 'anthropic/claude-opus-4');
+    expect(opus.costUSD).toBeGreaterThan(haiku.costUSD * 5);
+  });
+});
+
+describe('oracle policies', () => {
+  it('oracle_quality picks the per-question best (haiku@q1, opus@q2)', () => {
+    const o = oracleQuality(M);
+    expect(o.picks).toEqual(['anthropic/claude-haiku-4.5', 'anthropic/claude-opus-4']);
+    expect(o.quality).toBeCloseTo((0.8 + 0.9) / 2); // 0.85 — the quality upper bound
+  });
+
+  it('oracle_cost_optimal(eps=0) equals oracle_quality picks (no slack)', () => {
+    const o = oracleCostOptimal(M, 0);
+    expect(o.picks).toEqual(['anthropic/claude-haiku-4.5', 'anthropic/claude-opus-4']);
+  });
+
+  it('oracle_cost_optimal with slack prefers the cheaper model when within ε', () => {
+    // ε=0.15: at q1 both models (0.8 vs 0.7) are within 0.15 of best(0.8) → cheap haiku.
+    // at q2 only opus (0.9) is within 0.15 of best(0.9); haiku(0.6) is not → opus.
+    const o = oracleCostOptimal(M, 0.15);
+    expect(o.picks).toEqual(['anthropic/claude-haiku-4.5', 'anthropic/claude-opus-4']);
+    // bigger ε=0.35: q2 haiku(0.6) now within 0.35 of 0.9 → cheap haiku wins on cost.
+    const o2 = oracleCostOptimal(M, 0.35);
+    expect(o2.picks).toEqual(['anthropic/claude-haiku-4.5', 'anthropic/claude-haiku-4.5']);
+  });
+});
+
+describe('router + analyse', () => {
+  it('a naive always-cheapest router = always_haiku', () => {
+    const r = routerPolicy(M, 'router_v1', () => 'anthropic/claude-haiku-4.5');
+    expect(r.quality).toBeCloseTo(0.7);
+  });
+
+  it('analyse reports each policy as a fraction of the oracle quality/dollar', () => {
+    const oracle = oracleCostOptimal(M, 0.35); // all-haiku here → cheapest high q/$
+    const scored = analyse([alwaysPolicy(M, 'anthropic/claude-opus-4'), oracle], oracle);
+    expect(scored[1].pctOfOracle).toBeCloseTo(1); // oracle vs itself = 100%
+    expect(scored[0].pctOfOracle!).toBeLessThan(1); // always_opus is below oracle q/$
+  });
+});

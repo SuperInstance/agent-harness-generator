@@ -119,6 +119,36 @@ async function main() {
     return;
   }
 
+  // ADR-040: --routing builds the per-question×per-model matrix (one live run)
+  // and evaluates the routing ladder (always_X, oracle, cost-optimal oracle,
+  // router_v1) on quality/dollar. Needs --live + a judge for real quality.
+  if (has('routing')) {
+    const { runRoutingMatrix, alwaysPolicy, oracleQuality, oracleCostOptimal, routerPolicy, analyse } = await import('./routing.js');
+    const pool = (arg('pool') ?? 'anthropic/claude-haiku-4.5,openai/gpt-5,anthropic/claude-opus-4').split(',');
+    const eps = arg('epsilon') ? parseFloat(arg('epsilon')!) : 0.03;
+    const concurrency = parseInt(process.env.DRACO_CONCURRENCY ?? '4', 10) || 4;
+    const matrix = await runRoutingMatrix(corpus, { pool, transport, checkUrl, judgeTransport, limit, concurrency, onProgress });
+    const always = pool.map((mdl) => alwaysPolicy(matrix, mdl));
+    const oQ = oracleQuality(matrix);
+    const oCO = oracleCostOptimal(matrix, eps);
+    const { BLENDED_USD_PER_MTOK } = await import('./cost-efficiency.js');
+    const cheapest = pool.slice().sort((a, b) => (BLENDED_USD_PER_MTOK[a] ?? Infinity) - (BLENDED_USD_PER_MTOK[b] ?? Infinity))[0];
+    const routerV1 = routerPolicy(matrix, 'router_v1(always-cheapest)', () => cheapest);
+    const ladder = analyse([...always, oQ, routerV1, oCO], oCO);
+    process.stdout.write(`\nDRACO ${kind.toUpperCase()} ROUTING (ADR-040) — quality/dollar ladder (eps=${eps})\n`);
+    process.stdout.write(`  pool: ${pool.join(', ')}\n`);
+    for (const p of ladder) {
+      process.stdout.write(`  ${p.label.padEnd(34)} q ${p.quality.toFixed(4)}  $${p.costUSD.toFixed(3)}  q/$ ${p.qualityPerUSD.toFixed(2)}  ${((p.pctOfOracle ?? 0) * 100).toFixed(0)}% of oracle\n`);
+    }
+    if (out) {
+      const outPath = resolve(out);
+      mkdirSync(dirname(outPath), { recursive: true });
+      writeFileSync(outPath, JSON.stringify({ pool, epsilon: eps, matrix, ladder }, null, 2) + '\n', 'utf-8');
+      process.stderr.write(`[draco] wrote ${outPath}\n`);
+    }
+    return;
+  }
+
   // ADR-039: --cost-report computes the Pareto cost-efficiency comparison from
   // committed run artifacts. PURE arithmetic — no API calls, no spend.
   if (has('cost-report')) {
