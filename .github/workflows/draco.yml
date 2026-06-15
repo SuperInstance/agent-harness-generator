@@ -56,7 +56,11 @@ jobs:
         shell: bash
         run: |
           cd packages/bench
-          npx vitest run __tests__/draco-corpus.test.ts __tests__/draco-fusion.test.ts __tests__/draco-scorer.test.ts __tests__/draco-judge.test.ts __tests__/draco-ablation.test.ts __tests__/draco-threeway.test.ts
+          # Run the FULL bench suite — not an explicit file list — so every
+          # optimization arm (augment, self-consistency, and any future arm in
+          # ADR-038) is regression-guarded the moment its test lands. An explicit
+          # list silently drifts: arm tests existed but CI never ran them.
+          npx vitest run
           node ./dist/draco/draco-bin.js --out=draco-current.json
 
       - name: Gate the machinery against the committed mock baseline
